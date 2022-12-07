@@ -10,7 +10,7 @@ public class Piece : MonoBehaviour
     [SerializeField] private MeshFilter meshFilter;
     [SerializeField] private MeshRenderer meshRenderer;
 
-    private enum Type{
+    public enum Type{
         Undifinied = 0,
         Pawn = 1,
         Knight = 2,
@@ -20,7 +20,7 @@ public class Piece : MonoBehaviour
         King = 6
     }
 
-    private enum Team{
+    public enum Team{
         White = 0,
         Black = 1
     }
@@ -37,6 +37,14 @@ public class Piece : MonoBehaviour
 
         if(team == 1)
             transform.Rotate(new Vector3(0,180,0));
+    }
+
+    public Type GetPieceType(){
+        return type;
+    }
+
+    public Team GetPieceTeam(){
+        return team;
     }
     
 }

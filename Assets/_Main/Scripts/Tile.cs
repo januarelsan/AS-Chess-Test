@@ -9,6 +9,7 @@ public class Tile : MonoBehaviour
     [SerializeField] private Material hoverTileMat;
     [SerializeField] private MeshRenderer meshRenderer;
     private Vector3 coordinate;
+    private Piece currentPiece;
     public void Setup(int x, int y){
         coordinate = new Vector3(x,0,y);
         name = GetName();
@@ -19,6 +20,11 @@ public class Tile : MonoBehaviour
     {        
         // Debug.Log(string.Format("Mouse is over GameObject {0}.",name));
         meshRenderer.material = hoverTileMat;
+    }
+
+    void OnMouseDown() {
+        if(IsOccupied())    
+            Debug.Log(CurrentPiece().name);
     }
 
     void OnMouseExit()
@@ -52,4 +58,16 @@ public class Tile : MonoBehaviour
 
         return colName + rowName + string.Format(" ({0},{1})", coordinate.x, coordinate.z);
     }
+
+    public void SetCurrentPiece(Piece currentPiece){
+        this.currentPiece = currentPiece;
+    }
+    public Piece CurrentPiece(){
+        return currentPiece;
+    }
+
+    public bool IsOccupied(){
+        return currentPiece != null;
+    }
+
 }
