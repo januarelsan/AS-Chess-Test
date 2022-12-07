@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class Piece : MonoBehaviour
 {
+    [SerializeField] private Mesh[] typeMeshes;
+    [SerializeField] private Material[] teamMaterials;
+
+    [SerializeField] private MeshFilter meshFilter;
+    [SerializeField] private MeshRenderer meshRenderer;
+
     private enum Type{
         Undifinied = 0,
         Pawn = 1,
@@ -21,5 +27,16 @@ public class Piece : MonoBehaviour
     
     private Type type;
     private Team team;
+
+    public void Setup(int type, int team){
+        this.type = (Type) type;
+        this.team = (Team) team;        
+
+        meshFilter.mesh = typeMeshes[type - 1];
+        meshRenderer.material = teamMaterials[team];
+
+        if(team == 1)
+            transform.Rotate(new Vector3(0,180,0));
+    }
     
 }

@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 1649550573796473535}
   - component: {fileID: 6268976937113119520}
   - component: {fileID: 7233872815584171278}
-  - component: {fileID: 7702177630663356584}
+  - component: {fileID: 320096724374858434}
   m_Layer: 0
-  m_Name: Cylinder
+  m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 76622925447390950}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 7824375768020370801}
@@ -82,8 +82,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &7702177630663356584
-CapsuleCollider:
+--- !u!65 &320096724374858434
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -92,9 +92,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
+  serializedVersion: 2
+  m_Size: {x: 1.0000001, y: 2, z: 1.0000002}
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &2150907507017819880
 GameObject:
@@ -105,6 +104,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7824375768020370801}
+  - component: {fileID: 5698088716783061554}
   m_Layer: 0
   m_Name: Piece
   m_TagString: Untagged
@@ -127,3 +127,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5698088716783061554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2150907507017819880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23cbe43787f90c6418038c3a56119418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  typeMeshes:
+  - {fileID: 4300000, guid: 6730016ba0e329c499d89e81bd550346, type: 3}
+  - {fileID: 4300000, guid: 69faab6ae9c00a848a82d036ac8c75d4, type: 3}
+  - {fileID: 4300000, guid: 1e1130c2d0732f44eb82b057a9dcf58b, type: 3}
+  - {fileID: 4300000, guid: 695bd15b69d9eac408b599c22f9de55d, type: 3}
+  - {fileID: 4300000, guid: 3d88c9550087ec84c95090f5be583f60, type: 3}
+  - {fileID: 4300000, guid: 763435837405bc24691af77936be360b, type: 3}
+  teamMaterials:
+  - {fileID: 2100000, guid: 960823feb1e148643be0d91597f6994d, type: 2}
+  - {fileID: 2100000, guid: b5627df92e98bcf458d202011ec28a5d, type: 2}
+  meshFilter: {fileID: 6268976937113119520}
+  meshRenderer: {fileID: 7233872815584171278}

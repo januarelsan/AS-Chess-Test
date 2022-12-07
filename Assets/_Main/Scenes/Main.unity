@@ -166,7 +166,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27e517a941229d24d9136cafd3556013, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boardManager: {fileID: 1263242999}
   piecePrefab: {fileID: 2150907507017819880, guid: 19257363730e86f479b8f4f83023116b, type: 3}
 --- !u!1001 &168398923
 PrefabInstance:
