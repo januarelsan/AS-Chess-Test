@@ -61,21 +61,34 @@ public class Piece : MonoBehaviour
         OnDeselectPiece(this);
     }
     
-    public void OccupiesTile(Tile tile){
-        if(tile == null){
+    public void OccupiesTile(Tile targetTile){
+        if(targetTile == null){
             Debug.Log("No Tile to Occupy");    
             transform.position = occupiedTile.transform.position;
             return;
         }
 
-        Debug.Log(name + " Occupies Tile " + tile.name);
+        //Capture Enemy Piece
+        if(targetTile.CurrentPiece() != null){
+            
+            targetTile.CurrentPiece().Dead();
+            
+        }
+
+        Debug.Log(name + " Occupies Tile " + targetTile.name);
         //Leave Last Tile
         occupiedTile.SetCurrentPiece(null);
 
         //Set New Occupied Tile
-        occupiedTile = tile;        
+        occupiedTile = targetTile;        
         occupiedTile.SetCurrentPiece(this);
         transform.position = occupiedTile.transform.position;
+    }
+
+    void Dead(){
+        occupiedTile = null;
+        gameObject.SetActive(false);
+        GameController.Instance.AddDeadPiece(this);
     }
     
 
