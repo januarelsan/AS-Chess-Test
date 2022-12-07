@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Piece : MonoBehaviour
 {
+    public delegate void SelectPiece(Piece piece);
+    public static event SelectPiece OnSelectPiece;
+    public static event SelectPiece OnDeselectPiece;
     [SerializeField] private Mesh[] typeMeshes;
     [SerializeField] private Material[] teamMaterials;
 
@@ -45,6 +48,14 @@ public class Piece : MonoBehaviour
 
     public Team GetPieceTeam(){
         return team;
+    }
+
+    public void Select(){
+        OnSelectPiece(this);
+    }
+
+    public void Deselect(){
+        OnDeselectPiece(this);
     }
     
 }
