@@ -40,7 +40,7 @@ public class PieceSpawner : MonoBehaviour
             GameObject tile =  BoardManager.Instance.GetTiles()[i];
             GameObject pieceGO = Instantiate(piecePrefab, tile.transform.position, tile.transform.rotation, transform);
             Piece pieceComponent = pieceGO.GetComponent<Piece>();
-            pieceComponent.Setup(boardData.tilePieces[i].type, boardData.tilePieces[i].team);
+            pieceComponent.Setup(tile.GetComponent<Tile>(), boardData.tilePieces[i].type, boardData.tilePieces[i].team);
 
             pieceGO.name = string.Format("{0} {1}", pieceComponent.GetPieceTeam().ToString(), pieceComponent.GetPieceType().ToString()) ;
             

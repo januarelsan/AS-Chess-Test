@@ -7,15 +7,23 @@ public class GameController : MonoBehaviour
     private bool isSelectingPiece;
     private Piece selectedPiece;
 
+    private Tile hoveredTile;
+
     private void OnEnable()
     {
         Piece.OnSelectPiece += SelectPiece;        
         Piece.OnDeselectPiece += DeselectPiece;        
+
+        Tile.OnHoverTile += HoverTile;        
+        Tile.OnHoverExitTile += HoverExitTile;     
     }
 
     private void OnDisable() {
         Piece.OnSelectPiece -= SelectPiece;        
-        Piece.OnDeselectPiece -= DeselectPiece;        
+        Piece.OnDeselectPiece -= DeselectPiece;    
+
+        Tile.OnHoverTile -= HoverTile;        
+        Tile.OnHoverExitTile -= HoverExitTile;         
         
     }
 
@@ -28,6 +36,8 @@ public class GameController : MonoBehaviour
         Debug.Log("GC Select: " + piece.name);
         selectedPiece = piece;
         isSelectingPiece = true;
+
+        
     }
 
     public void DeselectPiece(Piece piece){
@@ -36,11 +46,21 @@ public class GameController : MonoBehaviour
             return;
         } 
         
+        piece.OccupiesTile(hoveredTile);
+        
         Debug.Log("GC Deselect: " + piece.name);
         selectedPiece = null;
         isSelectingPiece = false;
     }
 
+    public void HoverTile(Tile tile){
+        hoveredTile = tile;
+    }
+
+    public void HoverExitTile(Tile tile){
+        hoveredTile = null;
+    }
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -50,6 +70,10 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(selectedPiece && hoveredTile){
+            Vector3 targetPos = hoveredTile.transform.position;
+            targetPos.y = 1;
+            selectedPiece.transform.position = Vector3.Lerp(selectedPiece.transform.position, targetPos, Time.deltaTime * 10);
+        }
     }
 }

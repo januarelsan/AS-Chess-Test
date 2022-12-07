@@ -13,6 +13,8 @@ public class Piece : MonoBehaviour
     [SerializeField] private MeshFilter meshFilter;
     [SerializeField] private MeshRenderer meshRenderer;
 
+    private Tile occupiedTile;
+
     public enum Type{
         Undifinied = 0,
         Pawn = 1,
@@ -30,8 +32,9 @@ public class Piece : MonoBehaviour
     
     private Type type;
     private Team team;
-
-    public void Setup(int type, int team){
+    
+    public void Setup(Tile tile, int type, int team){
+        occupiedTile = tile;
         this.type = (Type) type;
         this.team = (Team) team;        
 
@@ -50,7 +53,7 @@ public class Piece : MonoBehaviour
         return team;
     }
 
-    public void Select(){
+    public void Select(){        
         OnSelectPiece(this);
     }
 
@@ -58,4 +61,22 @@ public class Piece : MonoBehaviour
         OnDeselectPiece(this);
     }
     
+    public void OccupiesTile(Tile tile){
+        if(tile == null){
+            Debug.Log("No Tile to Occupy");    
+            transform.position = occupiedTile.transform.position;
+            return;
+        }
+
+        Debug.Log(name + " Occupies Tile " + tile.name);
+        //Leave Last Tile
+        occupiedTile.SetCurrentPiece(null);
+
+        //Set New Occupied Tile
+        occupiedTile = tile;        
+        occupiedTile.SetCurrentPiece(this);
+        transform.position = occupiedTile.transform.position;
+    }
+    
+
 }

@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
+    public delegate void HoverTile(Tile tile);
+    public static event HoverTile OnHoverTile;
+    public static event HoverTile OnHoverExitTile;
+
     [SerializeField] private Material whiteTileMat;
     [SerializeField] private Material blackTileMat;
     [SerializeField] private Material hoverTileMat;
@@ -20,11 +24,13 @@ public class Tile : MonoBehaviour
     {        
         // Debug.Log(string.Format("Mouse is over GameObject {0}.",name));
         meshRenderer.material = hoverTileMat;
+        OnHoverTile(this);
     }
     
     void OnMouseExit()
     {        
         meshRenderer.material = GetMaterial();
+        OnHoverExitTile(this);
     }
 
     void OnMouseDown() {
@@ -36,7 +42,7 @@ public class Tile : MonoBehaviour
 
     void OnMouseUp() {
         if(IsOccupied()){
-            // Debug.Log(CurrentPiece().name);
+            // Debug.Log(CurrentPiece().name);            
             CurrentPiece().Deselect();
         }
     }
@@ -74,7 +80,6 @@ public class Tile : MonoBehaviour
     public Piece CurrentPiece(){
         return currentPiece;
     }
-
     public bool IsOccupied(){
         return currentPiece != null;
     }
