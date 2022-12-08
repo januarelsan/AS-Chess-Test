@@ -33,7 +33,12 @@ public class SelectPieceManager : MonoBehaviour
             return;
         } 
 
-        // Debug.Log("GC Select: " + piece.name);
+        if((int) piece.GetPieceTeam() != GameController.Instance.TeamTurn()){
+            Debug.Log("Not Your Turn");
+            return;
+        } 
+
+        Debug.Log("GC Select: " + piece.name);
         selectedPiece = piece;
         isSelectingPiece = true;
 
