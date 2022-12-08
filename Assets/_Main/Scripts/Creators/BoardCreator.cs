@@ -132,17 +132,38 @@ public class BoardCreator : MonoBehaviour
         
         boardData.tilePieces.Clear();
 
+        int whiteKingCount = 0;
+        int blackKingCount = 0;
         for (int i = 0; i < gridLayoutGroup.transform.childCount; i++)
         {
             PieceButton pieceButton = gridLayoutGroup.transform.GetChild(i).GetComponent<PieceButton>();
             TilePiece tilePiece = new TilePiece(pieceButton.GetTypeInt(), pieceButton.GetTeamInt());
             boardData.tilePieces.Add(tilePiece);            
+
+            if(tilePiece.type == 6){
+                if(tilePiece.team == 0)
+                    whiteKingCount++;
+                else
+                    blackKingCount++;
+            }
+        }
+
+        if(whiteKingCount > 1 || blackKingCount > 1){
+            logText.text = "King can't be more than 1";
+            return;
+        }
+
+        if(whiteKingCount < 1 || blackKingCount < 1){
+            logText.text = "King can't be zero";
+            return;
         }
 
         boardData.rowCount = rowCount;
         boardData.colCount = colCount;
 
         SaveLoadJSON.Instance.SaveIntoJsonFile(boardData, boardDataFilename);
+
+        logText.text = "Board Saved";
 
     }
 
