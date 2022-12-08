@@ -65,6 +65,20 @@ public class PieceSpawner : Singleton<PieceSpawner>
         return pieces;
     }
 
+    public Piece GetTeamKing(int team){
+        
+        Piece piece = null;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            piece = transform.GetChild(i).GetComponent<Piece>();
+            if( (int) piece.GetPieceTeam() == team && piece.GetPieceType() == Piece.Type.King){                
+                return piece;
+            }
+        }
+
+        return piece;
+    }
+
     // Update is called once per frame
     void Update()
     {

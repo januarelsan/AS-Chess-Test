@@ -33,7 +33,7 @@ public class SelectPieceManager : MonoBehaviour
             return;
         } 
 
-        Debug.Log("GC Select: " + piece.name);
+        // Debug.Log("GC Select: " + piece.name);
         selectedPiece = piece;
         isSelectingPiece = true;
 
@@ -48,7 +48,7 @@ public class SelectPieceManager : MonoBehaviour
         
         piece.TryOccupiesTile(hoveredTile);
         
-        Debug.Log("GC Deselect: " + piece.name);
+        // Debug.Log("GC Deselect: " + piece.name);
         selectedPiece = null;
         isSelectingPiece = false;
     }

@@ -75,7 +75,27 @@ public class Piece : MonoBehaviour
             transform.position = occupiedTile.transform.position;
             return;
         }
+
+        occupiedTile.SetCurrentPiece(null);
+        King king  = PieceSpawner.Instance.GetTeamKing((int)team).GetComponent<King>();        
+        if(king.IsUnSafeMove(king.GetOccupiedTile().GetCoordinate())){
+            Debug.Log("The King Unprotected");  
+            targetTile.SetCurrentPiece(this, true);
+            
+            if(king.IsUnSafeMove(king.GetOccupiedTile().GetCoordinate())){
+                Debug.Log("You leave The King Unprotected");    
+                transform.position = occupiedTile.transform.position;            
+                occupiedTile.SetCurrentPiece(this);
+                targetTile.SetCurrentPiece(null);
+                targetTile.RemoveTempPiece();
+                return;
+            }
+            Debug.Log("You Protect The King");  
+            targetTile.RemoveTempPiece();
+        }        
+        occupiedTile.SetCurrentPiece(this);
         
+
 
         OccupiesTile(targetTile);
     }
@@ -89,6 +109,7 @@ public class Piece : MonoBehaviour
         }
 
         Debug.Log(name + " Occupies Tile " + targetTile.name);
+
         //Leave Last Tile
         occupiedTile.SetCurrentPiece(null);
 
@@ -119,5 +140,7 @@ public class Piece : MonoBehaviour
     public Tile GetOccupiedTile(){
         return occupiedTile;
     }
+
+    
 
 }

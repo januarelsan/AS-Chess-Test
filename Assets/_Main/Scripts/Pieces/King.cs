@@ -124,7 +124,7 @@ public class King : Piece
         
     }
     
-    private bool IsUnSafeMove(Vector2 targetTile){
+    public bool IsUnSafeMove(Vector2 targetTile){
         int opsTeam = ((int) team == 1) ? 0 : 1;
         return PieceSpawner.Instance.GetTeamPieces(opsTeam).Find(
             delegate(Piece piece)
@@ -133,23 +133,7 @@ public class King : Piece
             });
         
     }
-
-    private bool IsUnProtectedTile(Vector2 targetTile){
-                        
-        return PieceSpawner.Instance.GetTeamPieces(1).Find(
-            delegate(Piece piece)
-            {
-                if(piece.GetPieceType() == Type.Pawn)
-                    return piece.GetProtectedTileCoordinates().Contains(targetTile);
-                else
-                    return piece.GetLegalTileCoordinates().Contains(targetTile);
-                
-                
-            });
         
-    }
-
-    
     
     public override void TryOccupiesTile(Tile targetTile){
         

@@ -52,11 +52,11 @@ public class Pawn : Piece
     private void ForwardSingleMove(Vector2 occupiedTileCoord, int direction){
         Vector2 targetCoord = new Vector2(0,0);
         int step = 1 * direction;        
-        Debug.Log(BoardManager.Instance.GetTileDic().Count);
+        
         if(occupiedTileCoord.y < BoardManager.Instance.BoardData.rowCount){
             targetCoord = new Vector2(occupiedTileCoord.x, occupiedTileCoord.y + step);            
             Tile targetTile = null;
-            Debug.Log(BoardManager.Instance.GetTileDic().ContainsKey(targetCoord));
+            
             if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
                 return;            
             
@@ -156,6 +156,16 @@ public class Pawn : Piece
             transform.position = occupiedTile.transform.position;
             return;
         }
+
+        occupiedTile.SetCurrentPiece(null);
+        King king  = PieceSpawner.Instance.GetTeamKing((int)team).GetComponent<King>();        
+        if(king.IsUnSafeMove(king.GetOccupiedTile().GetCoordinate()) && king.IsUnSafeMove(targetTile.GetCoordinate())){
+            Debug.Log("You leave The King Unprotected");    
+            transform.position = occupiedTile.transform.position;            
+            occupiedTile.SetCurrentPiece(this);
+            return;
+        }        
+        occupiedTile.SetCurrentPiece(this);
 
         isFirstMove = false;
 

@@ -14,6 +14,7 @@ public class Tile : MonoBehaviour
     [SerializeField] private MeshRenderer meshRenderer;
     private Vector3 coordinate;
     private Piece currentPiece;
+    private Piece backupTempPiece;
     public void Setup(int x, int y){
         coordinate = new Vector3(x,0,y);
         name = GetName();
@@ -74,9 +75,23 @@ public class Tile : MonoBehaviour
         return colName + rowName + string.Format(" ({0},{1})", coordinate.x, coordinate.z);
     }
 
-    public void SetCurrentPiece(Piece currentPiece){
+    public void SetCurrentPiece(Piece currentPiece, bool isTemporary = false){
+        if(isTemporary){
+            backupTempPiece = this.currentPiece;
+            if(CurrentPiece())
+                CurrentPiece().gameObject.SetActive(false);
+        }
+
         this.currentPiece = currentPiece;
     }
+
+    public void RemoveTempPiece(){        
+        this.currentPiece = backupTempPiece;
+        
+        if(CurrentPiece())
+            CurrentPiece().gameObject.SetActive(true);
+    }
+
     public Piece CurrentPiece(){
         return currentPiece;
     }

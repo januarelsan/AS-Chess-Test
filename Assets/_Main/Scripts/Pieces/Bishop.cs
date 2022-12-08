@@ -50,16 +50,16 @@ public class Bishop : Piece
 
     private void RightForwardDiagLongMove(Vector2 occupiedTileCoord, Vector2 targetCoord){
         int step = 1;        
-        Debug.Log(BoardManager.Instance.GetTileDic().Count);
+        
         for (int i = (int) occupiedTileCoord.x; i < BoardManager.Instance.BoardData.rowCount; i++)
         {
             targetCoord = new Vector2(occupiedTileCoord.x + step, occupiedTileCoord.y + step);            
             Tile targetTile = null;
-            Debug.Log(BoardManager.Instance.GetTileDic().ContainsKey(targetCoord));
+            
             if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
                 break;            
             
-            Debug.Log(targetCoord);
+            
 
             targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
             
@@ -71,16 +71,16 @@ public class Bishop : Piece
     }
     private void LeftForwardDiagLongMove(Vector2 occupiedTileCoord, Vector2 targetCoord){
         int step = 1;        
-        Debug.Log(BoardManager.Instance.GetTileDic().Count);
+        
         for (int i = (int) occupiedTileCoord.x; i > 0; i--)
         {
             targetCoord = new Vector2(occupiedTileCoord.x - step, occupiedTileCoord.y + step);            
             Tile targetTile = null;
-            Debug.Log(BoardManager.Instance.GetTileDic().ContainsKey(targetCoord));
+            
             if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
                 break;            
             
-            Debug.Log(targetCoord);
+            
 
             targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
             
@@ -93,16 +93,16 @@ public class Bishop : Piece
     
     private void RightBackwardDiagLongMove(Vector2 occupiedTileCoord, Vector2 targetCoord){
         int step = 1;        
-        Debug.Log(BoardManager.Instance.GetTileDic().Count);
+        
         for (int i = (int) occupiedTileCoord.x; i < BoardManager.Instance.BoardData.rowCount; i++)
         {
             targetCoord = new Vector2(occupiedTileCoord.x + step, occupiedTileCoord.y - step);            
             Tile targetTile = null;
-            Debug.Log(BoardManager.Instance.GetTileDic().ContainsKey(targetCoord));
+            
             if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
                 break;            
             
-            Debug.Log(targetCoord);
+            
 
             targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
             
@@ -115,16 +115,16 @@ public class Bishop : Piece
 
     private void LeftBackwardDiagLongMove(Vector2 occupiedTileCoord, Vector2 targetCoord){
         int step = 1;        
-        Debug.Log(BoardManager.Instance.GetTileDic().Count);
+        
         for (int i = (int) occupiedTileCoord.x; i > 0; i--)
         {
             targetCoord = new Vector2(occupiedTileCoord.x - step, occupiedTileCoord.y - step);            
             Tile targetTile = null;
-            Debug.Log(BoardManager.Instance.GetTileDic().ContainsKey(targetCoord));
+            
             if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
                 break;            
             
-            Debug.Log(targetCoord);
+            
 
             targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
             
@@ -141,11 +141,15 @@ public class Bishop : Piece
             if(tile.CurrentPiece().GetPieceTeam() == GetPieceTeam()){
                 if(isCheckProtectedTile)
                     coordinates.Add(tile.GetCoordinate());
-
+                
                 return false;
-            } 
-            coordinates.Add(tile.GetCoordinate());
-            return isCheckProtectedTile;
+
+            } else {
+
+                coordinates.Add(tile.GetCoordinate());
+                return isCheckProtectedTile && tile.CurrentPiece().GetPieceType() == Type.King;
+
+            }
         }
 
         coordinates.Add(tile.GetCoordinate());
