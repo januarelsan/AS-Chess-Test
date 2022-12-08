@@ -84,4 +84,7 @@ public class Tile : MonoBehaviour
         return currentPiece != null;
     }
 
+    public Vector2 GetCoordinate(){
+        return new Vector2(coordinate.x, coordinate.z);
+    }
 }

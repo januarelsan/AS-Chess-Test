@@ -349,7 +349,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27e517a941229d24d9136cafd3556013, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  piecePrefab: {fileID: 2150907507017819880, guid: 19257363730e86f479b8f4f83023116b, type: 3}
+  piecePrefabs:
+  - {fileID: 2150907507017819880, guid: 19257363730e86f479b8f4f83023116b, type: 3}
+  - {fileID: 8672248752900485377, guid: 4fb2c4cafc4efed49b0cab02c7ea6258, type: 3}
+  - {fileID: 8854210790157516141, guid: 5a676ea3df0c3a441852bcd6f48f1a3b, type: 3}
+  - {fileID: 335797162607690186, guid: f0387cc0a0e3b7d4a9bdba2c582e0df1, type: 3}
+  - {fileID: 567988602486487921, guid: 38719881034093842974eb4d593ebfd6, type: 3}
+  - {fileID: 8552108402235461777, guid: 12d5b99bc0d3b7e4fb3edd3b14457496, type: 3}
 --- !u!1001 &168398923
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1029,8 +1035,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 190c1322f098ace4a9541724e67010e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rowCount: 7
-  colCount: 4
   tilePrefab: {fileID: 276243466873884810, guid: 5639660ff76dbaa4cb66e0ed7efe168f, type: 3}
 --- !u!1 &1750682801
 GameObject:

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PieceSpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject piecePrefab;
+    [SerializeField] private GameObject[] piecePrefabs;
 
     private BoardData boardData = new BoardData();   
     private const string boardDataFilename = "BoardData";
@@ -32,19 +32,20 @@ public class PieceSpawner : MonoBehaviour
     void SpawnPieces()
     {
         Debug.Log(boardData.tilePieces.Count);
-        for (int i = 0; i < BoardManager.Instance.GetTiles().Count; i++)
+        for (int i = 0; i < BoardManager.Instance.GetTileList().Count; i++)
         {
             if(boardData.tilePieces[i].type == 0)
                 continue;
 
-            GameObject tile =  BoardManager.Instance.GetTiles()[i];
-            GameObject pieceGO = Instantiate(piecePrefab, tile.transform.position, tile.transform.rotation, transform);
+            Tile tile =  BoardManager.Instance.GetTileList()[i];
+            GameObject tileGO = tile.gameObject;
+            GameObject pieceGO = Instantiate(piecePrefabs[boardData.tilePieces[i].type - 1], tile.transform.position, tile.transform.rotation, transform);
             Piece pieceComponent = pieceGO.GetComponent<Piece>();
-            pieceComponent.Setup(tile.GetComponent<Tile>(), boardData.tilePieces[i].type, boardData.tilePieces[i].team);
+            pieceComponent.Setup(tile, boardData.tilePieces[i].type, boardData.tilePieces[i].team);
 
             pieceGO.name = string.Format("{0} {1}", pieceComponent.GetPieceTeam().ToString(), pieceComponent.GetPieceType().ToString()) ;
             
-            BoardManager.Instance.GetTiles()[i].GetComponent<Tile>().SetCurrentPiece(pieceComponent);
+            BoardManager.Instance.GetTileList()[i].SetCurrentPiece(pieceComponent);
 
         }   
     }

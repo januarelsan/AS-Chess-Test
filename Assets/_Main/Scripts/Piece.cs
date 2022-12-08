@@ -6,14 +6,11 @@ public class Piece : MonoBehaviour
 {
     public delegate void SelectPiece(Piece piece);
     public static event SelectPiece OnSelectPiece;
-    public static event SelectPiece OnDeselectPiece;
-    [SerializeField] private Mesh[] typeMeshes;
-    [SerializeField] private Material[] teamMaterials;
+    public static event SelectPiece OnDeselectPiece;    
+    [SerializeField] private Material[] teamMaterials;    
+    [SerializeField] private MeshRenderer meshRenderer;    
 
-    [SerializeField] private MeshFilter meshFilter;
-    [SerializeField] private MeshRenderer meshRenderer;
-
-    private Tile occupiedTile;
+    protected Tile occupiedTile;
 
     public enum Type{
         Undifinied = 0,
@@ -31,14 +28,14 @@ public class Piece : MonoBehaviour
     }
     
     private Type type;
-    private Team team;
+    protected Team team;
     
     public void Setup(Tile tile, int type, int team){
         occupiedTile = tile;
         this.type = (Type) type;
         this.team = (Team) team;        
 
-        meshFilter.mesh = typeMeshes[type - 1];
+      
         meshRenderer.material = teamMaterials[team];
 
         if(team == 1)
@@ -61,13 +58,27 @@ public class Piece : MonoBehaviour
         OnDeselectPiece(this);
     }
     
-    public void OccupiesTile(Tile targetTile){
+    public virtual void TryOccupiesTile(Tile targetTile){
+        
         if(targetTile == null){
             Debug.Log("No Tile to Occupy");    
             transform.position = occupiedTile.transform.position;
             return;
         }
 
+        bool isLegalTile = GetLegalTileCoordinates().Contains(targetTile.GetCoordinate());        
+
+        if(!isLegalTile){
+            Debug.Log("Target Tile is not Legal Tiles");    
+            transform.position = occupiedTile.transform.position;
+            return;
+        }
+        
+
+        OccupiesTile(targetTile);
+    }
+
+    protected void OccupiesTile(Tile targetTile){
         //Capture Enemy Piece
         if(targetTile.CurrentPiece() != null){
             
@@ -85,11 +96,20 @@ public class Piece : MonoBehaviour
         transform.position = occupiedTile.transform.position;
     }
 
-    void Dead(){
+    private void Dead(){
         occupiedTile = null;
         gameObject.SetActive(false);
         GameController.Instance.AddDeadPiece(this);
     }
     
+    protected virtual List<Vector2> GetLegalTileCoordinates(){
+        
+        List<Vector2> coordinates = new List<Vector2>();        
+        return coordinates;
+    }
+
+    public Tile GetOccupiedTile(){
+        return occupiedTile;
+    }
 
 }

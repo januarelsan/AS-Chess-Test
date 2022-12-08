@@ -46,7 +46,7 @@ public class SelectPieceManager : MonoBehaviour
             return;
         } 
         
-        piece.OccupiesTile(hoveredTile);
+        piece.TryOccupiesTile(hoveredTile);
         
         Debug.Log("GC Deselect: " + piece.name);
         selectedPiece = null;

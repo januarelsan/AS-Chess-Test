@@ -1,22 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class BoardManager : Singleton<BoardManager>
 {
     public delegate void FinishSetup();
     public static event FinishSetup OnFinishSetup;
 
-    [SerializeField] private int rowCount;
-    [SerializeField] private int colCount;
     [SerializeField] private GameObject tilePrefab;
 
-    private List<GameObject> tiles = new List<GameObject>();
+    private List<Tile> tileList = new List<Tile>();
+    private Dictionary<Vector2,Tile> tileDic = new Dictionary<Vector2,Tile>();
 
     private BoardData boardData = new BoardData();    
 
     private const string boardDataFilename = "BoardData";
 
+    
+    public int MyProperty { get; private set; }
+    private int myVar;
+    
+    public BoardData BoardData
+    {
+        get { return boardData; }
+        
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -41,9 +50,11 @@ public class BoardManager : Singleton<BoardManager>
             for (int x = 0; x < colCount; x++)
             {
                 tile = GenerateTile(x,y);
-                tiles.Add(tile);
+                tileList.Add(tile.GetComponent<Tile>());
             }
         }
+
+        tileDic = tileList.ToDictionary(tile => tile.GetCoordinate(), tile => tile);
 
         OnFinishSetup();
     }
@@ -54,11 +65,13 @@ public class BoardManager : Singleton<BoardManager>
         return tile;
     }
 
-    public List<GameObject> GetTiles(){
-        return tiles;
+    public List<Tile> GetTileList(){
+        return tileList;
     }
 
-    
+    public Dictionary<Vector2, Tile> GetTileDic(){
+        return tileDic;
+    }  
 
     // Update is called once per frame
     void Update()
