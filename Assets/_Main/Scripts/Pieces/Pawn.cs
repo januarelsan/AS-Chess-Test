@@ -94,10 +94,12 @@ public class Pawn : Piece
     private bool CaptureRule(Tile tile)
     {
         
-        if(tile.CurrentPiece() == null){
-            
+        if(tile.CurrentPiece() == null){            
             return false;
         }
+
+        if(tile.CurrentPiece().GetPieceTeam() == team)
+            return false;
 
         coordinates.Add(tile.GetCoordinate());
         return true;            
