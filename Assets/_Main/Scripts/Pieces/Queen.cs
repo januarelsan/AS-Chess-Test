@@ -237,7 +237,7 @@ public class Queen : Piece
                 return false;
             } 
             coordinates.Add(tile.GetCoordinate());
-            return false;
+            return isCheckProtectedTile;
         }
 
         coordinates.Add(tile.GetCoordinate());
