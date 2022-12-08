@@ -5,16 +5,19 @@ using UnityEngine;
 public class GameController : Singleton<GameController>
 {
     private List<Piece> deadPieces = new List<Piece>();
-    // Start is called before the first frame update
-    void Start()
+    
+    private void OnEnable()
     {
-        
+        Piece.OnOccupies += CheckKingCheckmate;        
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    private void OnDisable() {
+        Piece.OnOccupies -= CheckKingCheckmate;                
+    }
+
+    void CheckKingCheckmate(){
+        Debug.Log("White King is Checkmate " + PieceSpawner.Instance.GetTeamKing(0).GetComponent<King>().IsCheckmate());
+        Debug.Log("Black is Checkmate " + PieceSpawner.Instance.GetTeamKing(1).GetComponent<King>().IsCheckmate());
     }
 
     public void AddDeadPiece(Piece deadPiece){

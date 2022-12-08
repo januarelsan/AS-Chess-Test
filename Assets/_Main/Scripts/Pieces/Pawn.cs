@@ -81,9 +81,7 @@ public class Pawn : Piece
             Tile targetTile = null;            
             if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
                 break;            
-            
-            Debug.Log(targetCoord + " " + step);
-
+                        
             targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
             
             if(!ForwardSingleMoveRule(targetTile))
@@ -159,11 +157,20 @@ public class Pawn : Piece
 
         occupiedTile.SetCurrentPiece(null);
         King king  = PieceSpawner.Instance.GetTeamKing((int)team).GetComponent<King>();        
-        if(king.IsUnSafeMove(king.GetOccupiedTile().GetCoordinate()) && king.IsUnSafeMove(targetTile.GetCoordinate())){
-            Debug.Log("You leave The King Unprotected");    
-            transform.position = occupiedTile.transform.position;            
-            occupiedTile.SetCurrentPiece(this);
-            return;
+        if(king.IsUnSafeMove(king.GetOccupiedTile().GetCoordinate())){
+            Debug.Log("The King Unprotected");  
+            targetTile.SetCurrentPiece(this, true);
+            
+            if(king.IsUnSafeMove(king.GetOccupiedTile().GetCoordinate())){
+                Debug.Log("You leave The King Unprotected");    
+                transform.position = occupiedTile.transform.position;            
+                occupiedTile.SetCurrentPiece(this);
+                targetTile.SetCurrentPiece(null);
+                targetTile.RemoveTempPiece();
+                return;
+            }
+            Debug.Log("You Protect The King");  
+            targetTile.RemoveTempPiece();
         }        
         occupiedTile.SetCurrentPiece(this);
 

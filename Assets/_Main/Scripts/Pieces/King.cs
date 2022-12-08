@@ -39,7 +39,7 @@ public class King : Piece
        
         return coordinates;
     }
-
+    
     private void SingleMove(Vector2 occupiedTileCoord){        
         
         Vector2 targetCoord = new Vector2(0,0);
@@ -159,6 +159,34 @@ public class King : Piece
         
 
         OccupiesTile(targetTile);
+    }
+
+    public bool IsCheckmate(){
+        int safeTileCount = 0;
+        foreach (Vector2 legalTileCoordinate in GetLegalTileCoordinates())
+        {
+            
+            if(IsUnSafeMove(legalTileCoordinate)){
+                Debug.Log("Target Tile is not Safe");    
+                transform.position = occupiedTile.transform.position;            
+                continue;                
+            }
+            safeTileCount++;
+        }
+
+        bool canMove = (safeTileCount == GetLegalTileCoordinates().Count) && GetLegalTileCoordinates().Count != 0;
+        
+        bool canHelped = false;
+        foreach (Piece piece in PieceSpawner.Instance.GetTeamPieces((int)team))
+        {
+                        
+            if(piece.IsCanProtectKing()){
+                canHelped = true;
+                break;
+            }
+        }
+        
+        return !canMove && !canHelped;
     }
     
 }

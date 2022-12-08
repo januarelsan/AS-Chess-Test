@@ -7,6 +7,9 @@ public class Piece : MonoBehaviour
     public delegate void SelectPiece(Piece piece);
     public static event SelectPiece OnSelectPiece;
     public static event SelectPiece OnDeselectPiece;    
+
+    public delegate void Occupy();
+    public static event Occupy OnOccupies;
     [SerializeField] private Material[] teamMaterials;    
     [SerializeField] private MeshRenderer meshRenderer;    
 
@@ -96,19 +99,17 @@ public class Piece : MonoBehaviour
         occupiedTile.SetCurrentPiece(this);
         
 
-
         OccupiesTile(targetTile);
     }
 
     protected void OccupiesTile(Tile targetTile){
+
         //Capture Enemy Piece
         if(targetTile.CurrentPiece() != null){
             
             targetTile.CurrentPiece().Dead();
             
         }
-
-        Debug.Log(name + " Occupies Tile " + targetTile.name);
 
         //Leave Last Tile
         occupiedTile.SetCurrentPiece(null);
@@ -117,6 +118,41 @@ public class Piece : MonoBehaviour
         occupiedTile = targetTile;        
         occupiedTile.SetCurrentPiece(this);
         transform.position = occupiedTile.transform.position;
+
+        OnOccupies();
+    }
+
+    public bool IsCanProtectKing(){        
+
+        int safeTileCount = 0;
+        foreach (Vector2 legalTileCoordinate in GetLegalTileCoordinates())
+        {
+            
+            occupiedTile.SetCurrentPiece(null);
+            King king  = PieceSpawner.Instance.GetTeamKing((int)team).GetComponent<King>();        
+            if(king.IsUnSafeMove(king.GetOccupiedTile().GetCoordinate())){                
+                
+                Tile targetTile = BoardManager.Instance.GetTileDic()[legalTileCoordinate];
+                
+                targetTile.SetCurrentPiece(this, true);
+                
+                if(king.IsUnSafeMove(king.GetOccupiedTile().GetCoordinate())){
+                    
+                    transform.position = occupiedTile.transform.position;            
+                    occupiedTile.SetCurrentPiece(this);
+                    targetTile.SetCurrentPiece(null);
+                    targetTile.RemoveTempPiece();
+                    continue;
+                }
+                
+                targetTile.RemoveTempPiece();
+            }        
+            occupiedTile.SetCurrentPiece(this);
+            safeTileCount++;
+        }
+
+        Debug.Log(name + " Safe Move " + safeTileCount);
+        return safeTileCount > 0;
     }
 
     private void Dead(){
