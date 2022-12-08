@@ -6,7 +6,26 @@ public class King : Piece
 {
     
     private List<Vector2> coordinates = new List<Vector2>();        
-    protected override List<Vector2> GetLegalTileCoordinates(){
+    public override List<Vector2> GetLegalTileCoordinates(){
+        
+        isCheckProtectedTile = false;
+
+        coordinates = new List<Vector2>();  
+        
+        int direction = (team == 0) ? 1 : -1;
+
+        Vector2 occupiedTileCoord = GetOccupiedTile().GetCoordinate();
+        
+        
+        //Register tiles        
+        SingleMove(occupiedTileCoord);
+       
+        return coordinates;
+    }
+
+    public override List<Vector2> GetProtectedTileCoordinates(){
+        
+        isCheckProtectedTile = true;
         
         coordinates = new List<Vector2>();  
         
@@ -92,7 +111,8 @@ public class King : Piece
         
         if(tile.CurrentPiece() != null){
             if(tile.CurrentPiece().GetPieceTeam() == GetPieceTeam()){
-
+                if(isCheckProtectedTile)
+                    coordinates.Add(tile.GetCoordinate());
                 return false;
             } 
             coordinates.Add(tile.GetCoordinate());
@@ -104,7 +124,57 @@ public class King : Piece
         
     }
     
+    private bool IsUnSafeMove(Vector2 targetTile){
+        int opsTeam = ((int) team == 1) ? 0 : 1;
+        return PieceSpawner.Instance.GetTeamPieces(opsTeam).Find(
+            delegate(Piece piece)
+            {
+                return piece.GetProtectedTileCoordinates().Contains(targetTile);                
+            });
+        
+    }
+
+    private bool IsUnProtectedTile(Vector2 targetTile){
+                        
+        return PieceSpawner.Instance.GetTeamPieces(1).Find(
+            delegate(Piece piece)
+            {
+                if(piece.GetPieceType() == Type.Pawn)
+                    return piece.GetProtectedTileCoordinates().Contains(targetTile);
+                else
+                    return piece.GetLegalTileCoordinates().Contains(targetTile);
+                
+                
+            });
+        
+    }
+
     
     
+    public override void TryOccupiesTile(Tile targetTile){
+        
+        if(targetTile == null){
+            Debug.Log("No Tile to Occupy");    
+            transform.position = occupiedTile.transform.position;
+            return;
+        }
+
+        bool isLegalTile = GetLegalTileCoordinates().Contains(targetTile.GetCoordinate());        
+
+        if(!isLegalTile){
+            Debug.Log("Target Tile is not Legal Tiles");    
+            transform.position = occupiedTile.transform.position;
+            return;
+        }
+
+        if(IsUnSafeMove(targetTile.GetCoordinate())){
+            Debug.Log("Target Tile is not Safe");    
+            transform.position = occupiedTile.transform.position;            
+            return;
+        }
+        
+
+        OccupiesTile(targetTile);
+    }
     
 }

@@ -5,8 +5,9 @@ using UnityEngine;
 public class Pawn : Piece
 {
     private bool isFirstMove = true;
-    private List<Vector2> coordinates = new List<Vector2>();        
-    protected override List<Vector2> GetLegalTileCoordinates(){
+    private List<Vector2> coordinates = new List<Vector2>();      
+
+    public override List<Vector2> GetLegalTileCoordinates(){
         
         coordinates = new List<Vector2>();  
         
@@ -19,9 +20,34 @@ public class Pawn : Piece
         ForwardSingleMove(occupiedTileCoord, direction);
         ForwardDoubleMove(occupiedTileCoord, direction);
         CaptureMove(occupiedTileCoord, direction);
+        
+        return coordinates;
+    }
+
+    public override List<Vector2> GetProtectedTileCoordinates(){
+        
+        coordinates = new List<Vector2>();  
+        
+        int direction = (team == 0) ? 1 : -1;
+
+        Vector2 occupiedTileCoord = GetOccupiedTile().GetCoordinate();
+                                
+        //Capture Right
+        Vector2 targetCoord  = new Vector2(occupiedTileCoord.x + direction, occupiedTileCoord.y + direction);                                    
+        if(BoardManager.Instance.GetTileDic().ContainsKey(targetCoord)){                                
+            coordinates.Add(targetCoord);                        
+        }
+        
+        //Capture Left
+        targetCoord  = new Vector2(occupiedTileCoord.x - direction, occupiedTileCoord.y + direction);                                    
+        if(BoardManager.Instance.GetTileDic().ContainsKey(targetCoord)){
+            coordinates.Add(targetCoord);            
+        }                   
 
         return coordinates;
     }
+
+    
 
     private void ForwardSingleMove(Vector2 occupiedTileCoord, int direction){
         Vector2 targetCoord = new Vector2(0,0);
@@ -34,8 +60,6 @@ public class Pawn : Piece
             if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
                 return;            
             
-            Debug.Log(targetCoord);
-
             targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
             
             if(!ForwardSingleMoveRule(targetTile))

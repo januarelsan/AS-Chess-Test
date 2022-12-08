@@ -29,6 +29,8 @@ public class Piece : MonoBehaviour
     
     private Type type;
     protected Team team;
+
+    protected bool isCheckProtectedTile;
     
     public void Setup(Tile tile, int type, int team){
         occupiedTile = tile;
@@ -101,10 +103,16 @@ public class Piece : MonoBehaviour
         gameObject.SetActive(false);
         GameController.Instance.AddDeadPiece(this);
     }
-    
-    protected virtual List<Vector2> GetLegalTileCoordinates(){
+
+    public virtual List<Vector2> GetLegalTileCoordinates(){
         
-        List<Vector2> coordinates = new List<Vector2>();        
+        List<Vector2> coordinates = new List<Vector2>();                
+        return coordinates;
+    }
+    
+    public virtual List<Vector2> GetProtectedTileCoordinates(){
+        
+        List<Vector2> coordinates = new List<Vector2>();                
         return coordinates;
     }
 

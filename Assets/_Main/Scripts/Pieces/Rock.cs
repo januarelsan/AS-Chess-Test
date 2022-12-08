@@ -6,7 +6,29 @@ public class Rock : Piece
 {
     
     private List<Vector2> coordinates = new List<Vector2>();        
-    protected override List<Vector2> GetLegalTileCoordinates(){
+    public override List<Vector2> GetLegalTileCoordinates(){
+
+        isCheckProtectedTile = false;
+        
+        coordinates = new List<Vector2>();  
+        
+        int direction = (team == 0) ? 1 : -1;
+
+        Vector2 occupiedTileCoord = GetOccupiedTile().GetCoordinate();
+        Vector2 targetCoord = new Vector2(0,0);
+        
+        //Register tiles        
+        ForwardLongMove(occupiedTileCoord, targetCoord);
+        BackwardLongMove(occupiedTileCoord, targetCoord);
+        RightLongMove(occupiedTileCoord, targetCoord);
+        LeftLongMove(occupiedTileCoord, targetCoord);
+
+        return coordinates;
+    }
+
+    public override List<Vector2> GetProtectedTileCoordinates(){
+
+        isCheckProtectedTile = true;
         
         coordinates = new List<Vector2>();  
         
@@ -115,7 +137,8 @@ public class Rock : Piece
         
         if(tile.CurrentPiece() != null){
             if(tile.CurrentPiece().GetPieceTeam() == GetPieceTeam()){
-
+                if(isCheckProtectedTile)
+                    coordinates.Add(tile.GetCoordinate());
                 return false;
             } 
             coordinates.Add(tile.GetCoordinate());

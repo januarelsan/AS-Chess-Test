@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PieceSpawner : MonoBehaviour
+public class PieceSpawner : Singleton<PieceSpawner>
 {
     [SerializeField] private GameObject[] piecePrefabs;
 
@@ -48,6 +48,21 @@ public class PieceSpawner : MonoBehaviour
             BoardManager.Instance.GetTileList()[i].SetCurrentPiece(pieceComponent);
 
         }   
+    }
+
+    public List<Piece> GetTeamPieces(int team){
+        List<Piece> pieces = new List<Piece>();
+
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Piece piece = transform.GetChild(i).GetComponent<Piece>();
+            if( (int) piece.GetPieceTeam() == team && piece.isActiveAndEnabled){                
+                pieces.Add(piece);
+            }
+
+        }
+
+        return pieces;
     }
 
     // Update is called once per frame
