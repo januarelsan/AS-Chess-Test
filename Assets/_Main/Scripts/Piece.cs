@@ -35,6 +35,8 @@ public class Piece : MonoBehaviour
 
     protected bool isCheckProtectedTile;
     
+    protected bool hasMoved;
+
     public void Setup(Tile tile, int type, int team){
         occupiedTile = tile;
         this.type = (Type) type;
@@ -98,6 +100,7 @@ public class Piece : MonoBehaviour
         }        
         occupiedTile.SetCurrentPiece(this);
         
+        hasMoved = true;
 
         OccupiesTile(targetTile);
     }
@@ -150,8 +153,7 @@ public class Piece : MonoBehaviour
             occupiedTile.SetCurrentPiece(this);
             safeTileCount++;
         }
-
-        Debug.Log(name + " Safe Move " + safeTileCount);
+        
         return safeTileCount > 0;
     }
 
@@ -176,6 +178,16 @@ public class Piece : MonoBehaviour
     public Tile GetOccupiedTile(){
         return occupiedTile;
     }
+
+    public void SetOccupiedTile(Tile tile){
+        occupiedTile = tile;
+    }
+
+    public bool HasMoved(){
+        return hasMoved;
+    }
+
+    
 
     
 

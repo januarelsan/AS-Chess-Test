@@ -5,7 +5,9 @@ using UnityEngine;
 public class King : Piece
 {
     
-    private List<Vector2> coordinates = new List<Vector2>();        
+    private List<Vector2> coordinates = new List<Vector2>();    
+
+    private List<CastlingRook> availCastlingRocks = new List<CastlingRook>();
     public override List<Vector2> GetLegalTileCoordinates(){
         
         isCheckProtectedTile = false;
@@ -19,6 +21,7 @@ public class King : Piece
         
         //Register tiles        
         SingleMove(occupiedTileCoord);
+        CastlingMove(occupiedTileCoord);
        
         return coordinates;
     }
@@ -105,6 +108,102 @@ public class King : Piece
                        
         
     }
+
+    private void CastlingMove(Vector2 occupiedTileCoord){        
+        
+        Vector2 targetCoord = new Vector2(0,0);
+                
+        // Castling Right
+        targetCoord = new Vector2(occupiedTileCoord.x + 2, occupiedTileCoord.y);                                    
+        if(BoardManager.Instance.GetTileDic().ContainsKey(targetCoord)){
+            Tile targetTile = BoardManager.Instance.GetTileDic()[targetCoord];        
+            CastlingRule(targetTile,1);
+        }
+
+        // Castling Left
+        targetCoord = new Vector2(occupiedTileCoord.x - 2, occupiedTileCoord.y);                                    
+        if(BoardManager.Instance.GetTileDic().ContainsKey(targetCoord)){
+            Tile targetTile = BoardManager.Instance.GetTileDic()[targetCoord];        
+            CastlingRule(targetTile,-1);
+        }
+                
+    }
+
+    private bool CastlingRule(Tile tile, int wayDirection)
+    {
+        if(hasMoved)
+            return false;
+            
+        if(IsUnSafeMove(GetOccupiedTile().GetCoordinate())){
+            return false;
+        }
+        
+        if(tile.CurrentPiece() != null){            
+            return false;
+        }
+
+        int step = wayDirection;        
+        
+        for (int i = 0; i < BoardManager.Instance.BoardData.colCount; i++)
+        {
+            
+            Vector2 targetCoord = new Vector2(occupiedTile.GetCoordinate().x + step, occupiedTile.GetCoordinate().y);            
+                        
+            if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
+                break;            
+                    
+            Tile targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
+            
+            step += wayDirection;
+
+            int status = CastlingWayTileRule(targetTile, wayDirection);
+
+            Debug.Log(targetCoord.x + " - " + status);
+
+            if(status == 0) //Ilegal
+                break;
+
+            if(status == 1) // Legal
+                continue;
+
+            if(status == 2){ // Rock Found
+                Debug.Log("Rock Found");
+                coordinates.Add(tile.GetCoordinate());
+                break;
+            }
+                       
+        }
+        
+        return true;            
+        
+    }
+
+    private int CastlingWayTileRule(Tile tile, int wayDirection)
+    {
+        
+        
+        if(tile.CurrentPiece() == null){            
+            if(IsUnSafeMove(tile.GetCoordinate()))
+                return 0;
+
+            return 1;
+        }        
+
+        if(tile.CurrentPiece().GetPieceType() != Type.Rook)
+            return 0;
+
+        if(tile.CurrentPiece().GetPieceTeam() != team)
+            return 0;
+
+        if(tile.CurrentPiece().HasMoved())
+            return 0;
+
+        CastlingRook castlingRook = new CastlingRook(tile.CurrentPiece().GetComponent<Rock>(), wayDirection);
+        availCastlingRocks.Add(castlingRook);
+
+        return 2;            
+        
+    }
         
     private bool BasicLegalTileRule(Tile tile)
     {
@@ -157,8 +256,46 @@ public class King : Piece
             return;
         }
         
+        hasMoved = true;
 
-        OccupiesTile(targetTile);
+        DoCastlingMove(targetTile.GetCoordinate());
+
+        base.OccupiesTile(targetTile);
+    }
+
+    void DoCastlingMove(Vector2 targetCoord){
+
+        if( (occupiedTile.GetCoordinate().x - 2) == targetCoord.x || (occupiedTile.GetCoordinate().x + 2) == targetCoord.x){
+
+            Debug.Log("Do Castling");
+
+            int targetRock = 0; //right rock
+            int direction = 1;
+            
+            if(occupiedTile.GetCoordinate().x > targetCoord.x){ //Castling left
+                targetRock = 1;
+                direction = -1;
+            }
+
+            CastlingRook castlingRook = availCastlingRocks.Find(
+            delegate(CastlingRook castlingRook)
+            {
+                return castlingRook.Direction() == direction;                
+            });
+
+            castlingRook.Rock().GetOccupiedTile().SetCurrentPiece(null); // Leave Tile
+            Vector2 newTileCoord = new Vector2(targetCoord.x + direction * -1, targetCoord.y);
+            Tile newTile = BoardManager.Instance.GetTileDic()[newTileCoord];
+            castlingRook.Rock().SetOccupiedTile(newTile);
+            newTile.SetCurrentPiece(castlingRook.Rock());
+            castlingRook.Rock().transform.position = new Vector3(newTile.transform.position.x, 
+                castlingRook.Rock().transform.position.y,
+                newTile.transform.position.z);
+            
+            Debug.Log("Finish Castling");
+        }
+            
+
     }
 
     public bool IsCheckmate(){
@@ -166,8 +303,7 @@ public class King : Piece
         foreach (Vector2 legalTileCoordinate in GetLegalTileCoordinates())
         {
             
-            if(IsUnSafeMove(legalTileCoordinate)){
-                Debug.Log("Target Tile is not Safe");    
+            if(IsUnSafeMove(legalTileCoordinate)){                
                 transform.position = occupiedTile.transform.position;            
                 continue;                
             }
@@ -188,5 +324,26 @@ public class King : Piece
         
         return !canMove && !canHelped;
     }
+    
+}
+
+public class CastlingRook {
+
+    Rock rock;
+    int direction;
+    public CastlingRook(Rock rock, int direction){
+        this.rock = rock;
+        this.direction = direction;
+    }
+
+    public Rock Rock(){
+        return rock;
+    }
+
+    public int Direction(){
+        return direction;
+    }
+
+    
     
 }

@@ -442,7 +442,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bf298da7260efd4d8beb33de552da12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCheckTurn: 1
+  isCheckTurn: 0
 --- !u!4 &173767121
 Transform:
   m_ObjectHideFlags: 0
