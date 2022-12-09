@@ -50,14 +50,20 @@ public class PieceSpawner : Singleton<PieceSpawner>
         }   
     }
 
-    public List<Piece> GetTeamPieces(int team){
+    public List<Piece> GetTeamPieces(int team, int type = 0){
         List<Piece> pieces = new List<Piece>();
 
         for (int i = 0; i < transform.childCount; i++)
         {
             Piece piece = transform.GetChild(i).GetComponent<Piece>();
             if( (int) piece.GetPieceTeam() == team && piece.isActiveAndEnabled){                
-                pieces.Add(piece);
+                if(type == 0)
+                    pieces.Add(piece);
+                else{
+                    if((int)piece.GetPieceType() == type)
+                        pieces.Add(piece);
+                }
+
             }
 
         }

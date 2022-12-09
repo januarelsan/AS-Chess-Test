@@ -5,11 +5,14 @@ using UnityEngine;
 public class Pawn : Piece
 {
     private bool isFirstMove = true;
+    private bool isEnpassantable;
     private List<Vector2> coordinates = new List<Vector2>();      
+    public List<EnpassantTarget> enpassantTargets = new List<EnpassantTarget>();      
 
     public override List<Vector2> GetLegalTileCoordinates(){
         
         coordinates = new List<Vector2>();  
+        enpassantTargets = new List<EnpassantTarget>();     
         
         int direction = (team == 0) ? 1 : -1;
 
@@ -20,6 +23,7 @@ public class Pawn : Piece
         ForwardSingleMove(occupiedTileCoord, direction);
         ForwardDoubleMove(occupiedTileCoord, direction);
         CaptureMove(occupiedTileCoord, direction);
+        EnpassantMove(occupiedTileCoord, direction);
         
         return coordinates;
     }
@@ -113,6 +117,29 @@ public class Pawn : Piece
         
     }
 
+    private void EnpassantMove(Vector2 occupiedTileCoord, int direction){                
+        
+        Tile checkTile = null;
+
+        //Enpassant Right
+        Vector2 checkCoord  = new Vector2(occupiedTileCoord.x + 1, occupiedTileCoord.y);                                    
+        Vector2 targetCoord  = new Vector2(occupiedTileCoord.x + 1, occupiedTileCoord.y + direction);                                    
+        if(BoardManager.Instance.GetTileDic().ContainsKey(checkCoord)){                                
+            checkTile = BoardManager.Instance.GetTileDic()[checkCoord];                        
+            EnpassantRule(checkTile, targetCoord);
+        }
+
+        
+        //Enpassant Left
+        checkCoord  = new Vector2(occupiedTileCoord.x - 1, occupiedTileCoord.y);                                    
+        targetCoord  = new Vector2(occupiedTileCoord.x - 1, occupiedTileCoord.y + direction);                                    
+        if(BoardManager.Instance.GetTileDic().ContainsKey(checkCoord)){                                
+            checkTile = BoardManager.Instance.GetTileDic()[checkCoord];                               
+            EnpassantRule(checkTile, targetCoord);
+        }
+        
+    }
+
     private bool CaptureRule(Tile tile)
     {
         
@@ -128,6 +155,28 @@ public class Pawn : Piece
         
     }
 
+    private bool EnpassantRule(Tile checkTile, Vector2 targetCoord)
+    {
+        
+        if(checkTile.CurrentPiece() == null){            
+            return false;
+        }
+
+        if(checkTile.CurrentPiece().GetPieceTeam() == team)
+            return false;
+
+        if(checkTile.CurrentPiece().GetPieceType() != Type.Pawn)
+            return false;
+
+        if(!checkTile.CurrentPiece().GetComponent<Pawn>().isEnpassantable)            
+            return false;
+
+        coordinates.Add(targetCoord);
+        enpassantTargets.Add(new EnpassantTarget(targetCoord, checkTile.CurrentPiece()));
+        
+        return true;            
+        
+    }
     private bool ForwardSingleMoveRule(Tile tile)
     {
         
@@ -176,7 +225,82 @@ public class Pawn : Piece
 
         isFirstMove = false;
 
+        isEnpassantable = IsEnpasantableMove(targetTile);
+
+        DoEnpassantMove(targetTile.GetCoordinate());
+
         base.OccupiesTile(targetTile);
                 
     }
+
+    void DoEnpassantMove(Vector2 targetCoord){
+        EnpassantTarget enpassantTarget = enpassantTargets.Find(
+            delegate(EnpassantTarget enpassantTarget)
+            {
+                return enpassantTarget.TargetCoord() == targetCoord;                
+            });
+
+        if(enpassantTarget == null)
+            return;
+
+        Debug.Log("Do Enpassant Move");
+
+        enpassantTarget.TargetPiece().GetOccupiedTile().SetCurrentPiece(null);
+        enpassantTarget.TargetPiece().Dead();
+    }
+
+    public void RemoveEnpassantable(){
+        isEnpassantable = false;
+    }
+
+    bool IsEnpasantableMove(Tile targetTile){
+        int direction = (team == 0) ? -1 : 1;
+
+        if( (targetTile.GetCoordinate().y + direction * 2) == occupiedTile.GetCoordinate().y){
+            //Check is there pawn on the left
+            Vector2 targetCoord  = new Vector2(targetTile.GetCoordinate().x - 1, targetTile.GetCoordinate().y);                                    
+            if(BoardManager.Instance.GetTileDic().ContainsKey(targetCoord)){                                
+                Tile leftTargetTile = BoardManager.Instance.GetTileDic()[targetCoord];            
+                if(leftTargetTile.IsOccupied())
+                    return leftTargetTile.CurrentPiece().GetPieceType() == Type.Pawn;
+
+            }
+
+            //Check is there pawn on the right
+            targetCoord  = new Vector2(targetTile.GetCoordinate().x + 1, targetTile.GetCoordinate().y);                                    
+            if(BoardManager.Instance.GetTileDic().ContainsKey(targetCoord)){                                
+                Tile rightTargetTile = BoardManager.Instance.GetTileDic()[targetCoord];            
+                if(rightTargetTile.IsOccupied())
+                    return rightTargetTile.CurrentPiece().GetPieceType() == Type.Pawn;
+
+            }
+
+            return false;
+        }
+        
+        return false;
+    }
+
+    
+}
+
+public class EnpassantTarget {
+
+    Vector2 targetCoord;
+    Piece targetPiece;
+    public EnpassantTarget(Vector2 targetCoord, Piece targetPiece){
+        this.targetCoord = targetCoord;
+        this.targetPiece = targetPiece;
+    }
+
+    public Vector2 TargetCoord(){
+        return targetCoord;
+    }
+
+    public Piece TargetPiece(){
+        return targetPiece;
+    }
+
+    
+    
 }

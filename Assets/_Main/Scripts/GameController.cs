@@ -41,9 +41,19 @@ public class GameController : Singleton<GameController>
             teamTurn = 1;
         else
             teamTurn = 0;
+
+        RemoveEnpassantablePawns(teamTurn);
     }
 
     public int TeamTurn(){
         return teamTurn;
+    }
+
+    void RemoveEnpassantablePawns(int team){
+        List<Piece> pawns =  PieceSpawner.Instance.GetTeamPieces(team, 1);
+        foreach (Piece pawn in pawns)
+        {
+            pawn.GetComponent<Pawn>().RemoveEnpassantable();
+        }
     }
 }
