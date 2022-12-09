@@ -229,8 +229,33 @@ public class Pawn : Piece
 
         DoEnpassantMove(targetTile.GetCoordinate());
 
+        Tile lastTile = occupiedTile;
+        
         base.OccupiesTile(targetTile);
                 
+        DoPromotionMove(targetTile, lastTile);
+    }
+
+    void DoPromotionMove(Tile targetTile, Tile lastTile){
+        Debug.Log("Test Promotion");
+        
+        Debug.Log(BoardManager.Instance.BoardData.rowCount);
+        if(team == Team.White){
+            
+            if((int) targetTile.GetCoordinate().y != BoardManager.Instance.BoardData.rowCount - 1)
+                return;
+                        
+            PromoteManager.Instance.PromotePawn(this, lastTile);        
+            
+        } else {
+                        
+            if((int) targetTile.GetCoordinate().y != 0)
+                return;
+                        
+            PromoteManager.Instance.PromotePawn(this, lastTile);                
+        }
+
+
     }
 
     void DoEnpassantMove(Vector2 targetCoord){

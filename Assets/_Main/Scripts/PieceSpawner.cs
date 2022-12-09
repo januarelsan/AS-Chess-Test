@@ -85,6 +85,10 @@ public class PieceSpawner : Singleton<PieceSpawner>
         return piece;
     }
 
+    public GameObject GetPiecePrefab(int type){
+        return piecePrefabs[type];                
+    }
+
     // Update is called once per frame
     void Update()
     {

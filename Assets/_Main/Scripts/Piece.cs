@@ -105,7 +105,7 @@ public class Piece : MonoBehaviour
         OccupiesTile(targetTile);
     }
 
-    protected void OccupiesTile(Tile targetTile){
+    public void OccupiesTile(Tile targetTile){
 
         //Capture Enemy Piece
         if(targetTile.CurrentPiece() != null){
