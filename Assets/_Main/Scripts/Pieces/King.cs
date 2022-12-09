@@ -174,7 +174,7 @@ public class King : Piece
             safeTileCount++;
         }
 
-        bool canMove = (safeTileCount == GetLegalTileCoordinates().Count) && GetLegalTileCoordinates().Count != 0;
+        bool canMove = safeTileCount != 0 && GetLegalTileCoordinates().Count != 0;
         
         bool canHelped = false;
         foreach (Piece piece in PieceSpawner.Instance.GetTeamPieces((int)team))
