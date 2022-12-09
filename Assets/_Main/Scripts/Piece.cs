@@ -155,7 +155,7 @@ public class Piece : MonoBehaviour
         return safeTileCount > 0;
     }
 
-    private void Dead(){
+    public void Dead(){
         occupiedTile = null;
         gameObject.SetActive(false);
         GameController.Instance.AddDeadPiece(this);
