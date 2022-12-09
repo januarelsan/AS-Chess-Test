@@ -315,6 +315,8 @@ public class King : Piece
         bool canHelped = false;
         foreach (Piece piece in PieceSpawner.Instance.GetTeamPieces((int)team))
         {
+            if(piece.GetPieceType() == Type.King)
+                continue;
                         
             if(piece.IsCanProtectKing()){
                 canHelped = true;
