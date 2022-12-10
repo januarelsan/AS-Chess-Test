@@ -8,11 +8,18 @@ public class PromoteManager : Singleton<PromoteManager>
     [SerializeField] private GameObject[] teamButtonHolders;
     private Pawn toPromotePawn;
     private Tile toPromoteLastTile;
+    private Tile toPromoteTile;
 
 
-    public void PromotePawn(Pawn pawn, Tile lastTile){
+    public void PromotePawn(Pawn pawn, Tile lastTile, Tile toPromoteTile, bool isBeQueen = false){
         toPromotePawn = pawn;
         toPromoteLastTile = lastTile;
+        this.toPromoteTile = toPromoteTile;
+
+        if(isBeQueen){
+            ChoosePromotionPiece(5);
+            return;
+        }
 
         OpenPromotionPanel((int) pawn.GetPieceTeam());
     }
@@ -29,16 +36,16 @@ public class PromoteManager : Singleton<PromoteManager>
 
     
     public void ChoosePromotionPiece(int type){
-        GameObject pieceGO = Instantiate(PieceSpawner.Instance.GetPiecePrefab(type - 1), toPromotePawn.transform.position, toPromotePawn.transform.rotation, PieceSpawner.Instance.transform);
+        
+        GameObject pieceGO = Instantiate(PieceSpawner.Instance.GetPiecePrefab(type - 1), PieceSpawner.Instance.transform);
         Piece pieceComponent = pieceGO.GetComponent<Piece>();
         pieceComponent.Setup(toPromoteLastTile, type, (int) toPromotePawn.GetPieceTeam());
         toPromotePawn.GetOccupiedTile().SetCurrentPiece(null);
-        pieceComponent.OccupiesTile(toPromotePawn.GetOccupiedTile());
+        pieceComponent.OccupiesTile(toPromoteTile);
         
         toPromotePawn.gameObject.SetActive(false);
 
-        ClosePromotionPanel((int) toPromotePawn.GetPieceTeam());
+        ClosePromotionPanel((int) toPromotePawn.GetPieceTeam());        
 
-        GameController.Instance.TakeTurn();
     }
 }

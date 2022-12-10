@@ -215,9 +215,11 @@ public class Pawn : Piece
 
         Tile lastTile = occupiedTile;
         
-        base.OccupiesTile(targetTile);
+        
+        if(!DoPromotionMove(targetTile, lastTile)){
+            base.OccupiesTile(targetTile);
+        }
                 
-        DoPromotionMove(targetTile, lastTile);
     }
 
     bool LeavingKingUprotected(Tile targetTile){
@@ -244,23 +246,30 @@ public class Pawn : Piece
     }
 
 
-    void DoPromotionMove(Tile targetTile, Tile lastTile){
+    bool DoPromotionMove(Tile targetTile, Tile lastTile){
+        
+        bool isBeQueen = false;
+        if(GameController.Instance.TeamTurn() == AIManager.Instance.GetAITeam() || AIManager.Instance.GetAITeam() == 2){
+            isBeQueen = true;
+        }
         
         if(team == Team.White){
             
             if((int) targetTile.GetCoordinate().y != BoardManager.Instance.BoardData.rowCount - 1)
-                return;
+                return false;
                         
-            PromoteManager.Instance.PromotePawn(this, lastTile);        
+            PromoteManager.Instance.PromotePawn(this, lastTile, targetTile, isBeQueen);   
+            
             
         } else {
                         
             if((int) targetTile.GetCoordinate().y != 0)
-                return;
+                return false;
                         
-            PromoteManager.Instance.PromotePawn(this, lastTile);                
+            PromoteManager.Instance.PromotePawn(this, lastTile, targetTile, isBeQueen);                
         }
 
+        return true;
 
     }
 
