@@ -324,6 +324,17 @@ public class King : Piece
             }
         }
         
+
+        //Check if Stalemate instead
+        bool isOnCheck = IsUnSafeMove(occupiedTile.GetCoordinate());
+        bool isCurrentTurn = GameController.Instance.TeamTurn() == (int)team;
+        
+        if(!canMove && !canHelped && !isOnCheck && isCurrentTurn){
+            GameController.Instance.GameStalemate();
+            return false;
+        }
+        //Check if Stalemate instead |
+                
         return !canMove && !canHelped;
     }
     
