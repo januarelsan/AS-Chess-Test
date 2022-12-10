@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Rock : Piece
+public class Rook : Piece
 {
         
     public override List<Vector2> GetLegalTileCoordinates(){

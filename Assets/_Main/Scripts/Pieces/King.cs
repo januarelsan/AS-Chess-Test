@@ -5,7 +5,7 @@ using UnityEngine;
 public class King : Piece
 {
     
-    private List<CastlingRook> availCastlingRocks = new List<CastlingRook>();
+    private List<CastlingRook> availCastlingRooks = new List<CastlingRook>();
 
     private bool canCastling;
     public override List<Vector2> GetLegalTileCoordinates(){
@@ -164,7 +164,7 @@ public class King : Piece
             if(status == 1) // Legal
                 continue;
 
-            if(status == 2){ // Rock Found                
+            if(status == 2){ // Rook Found                
                 tileCoordinates.Add(tile.GetCoordinate());
                 break;
             }
@@ -194,8 +194,8 @@ public class King : Piece
         if(tile.CurrentPiece().HasMoved())
             return 0;
 
-        CastlingRook castlingRook = new CastlingRook(tile.CurrentPiece().GetComponent<Rock>(), wayDirection);
-        availCastlingRocks.Add(castlingRook);
+        CastlingRook castlingRook = new CastlingRook(tile.CurrentPiece().GetComponent<Rook>(), wayDirection);
+        availCastlingRooks.Add(castlingRook);
 
         return 2;            
         
@@ -290,19 +290,19 @@ public class King : Piece
                 direction = -1;
             }
 
-            CastlingRook castlingRook = availCastlingRocks.Find(
+            CastlingRook castlingRook = availCastlingRooks.Find(
             delegate(CastlingRook castlingRook)
             {
                 return castlingRook.Direction() == direction;                
             });
 
-            castlingRook.Rock().GetOccupiedTile().SetCurrentPiece(null); // Leave Tile
+            castlingRook.Rook().GetOccupiedTile().SetCurrentPiece(null); // Leave Tile
             Vector2 newTileCoord = new Vector2(targetCoord.x + direction * -1, targetCoord.y);
             Tile newTile = BoardManager.Instance.GetTileDic()[newTileCoord];
-            castlingRook.Rock().SetOccupiedTile(newTile);
-            newTile.SetCurrentPiece(castlingRook.Rock());
-            castlingRook.Rock().transform.position = new Vector3(newTile.transform.position.x, 
-                castlingRook.Rock().transform.position.y,
+            castlingRook.Rook().SetOccupiedTile(newTile);
+            newTile.SetCurrentPiece(castlingRook.Rook());
+            castlingRook.Rook().transform.position = new Vector3(newTile.transform.position.x, 
+                castlingRook.Rook().transform.position.y,
                 newTile.transform.position.z);
                         
         }
@@ -354,15 +354,15 @@ public class King : Piece
 
 public class CastlingRook {
 
-    Rock rock;
+    Rook rook;
     int direction;
-    public CastlingRook(Rock rock, int direction){
-        this.rock = rock;
+    public CastlingRook(Rook rook, int direction){
+        this.rook = rook;
         this.direction = direction;
     }
 
-    public Rock Rock(){
-        return rock;
+    public Rook Rook(){
+        return rook;
     }
 
     public int Direction(){
