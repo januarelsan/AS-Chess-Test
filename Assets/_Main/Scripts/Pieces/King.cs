@@ -5,14 +5,12 @@ using UnityEngine;
 public class King : Piece
 {
     
-    private List<Vector2> coordinates = new List<Vector2>();    
-
     private List<CastlingRook> availCastlingRocks = new List<CastlingRook>();
     public override List<Vector2> GetLegalTileCoordinates(){
         
         isCheckProtectedTile = false;
 
-        coordinates = new List<Vector2>();  
+        tileCoordinates = new List<Vector2>();  
         
         int direction = (team == 0) ? 1 : -1;
 
@@ -23,14 +21,14 @@ public class King : Piece
         SingleMove(occupiedTileCoord);
         CastlingMove(occupiedTileCoord);
        
-        return coordinates;
+        return tileCoordinates;
     }
 
     public override List<Vector2> GetProtectedTileCoordinates(){
         
         isCheckProtectedTile = true;
         
-        coordinates = new List<Vector2>();  
+        tileCoordinates = new List<Vector2>();  
         
         int direction = (team == 0) ? 1 : -1;
 
@@ -40,7 +38,7 @@ public class King : Piece
         //Register tiles        
         SingleMove(occupiedTileCoord);
        
-        return coordinates;
+        return tileCoordinates;
     }
     
     private void SingleMove(Vector2 occupiedTileCoord){        
@@ -164,9 +162,8 @@ public class King : Piece
             if(status == 1) // Legal
                 continue;
 
-            if(status == 2){ // Rock Found
-                Debug.Log("Rock Found");
-                coordinates.Add(tile.GetCoordinate());
+            if(status == 2){ // Rock Found                
+                tileCoordinates.Add(tile.GetCoordinate());
                 break;
             }
                        
@@ -178,7 +175,6 @@ public class King : Piece
 
     private int CastlingWayTileRule(Tile tile, int wayDirection)
     {
-        
         
         if(tile.CurrentPiece() == null){            
             if(IsUnSafeMove(tile.GetCoordinate()))
@@ -200,24 +196,6 @@ public class King : Piece
         availCastlingRocks.Add(castlingRook);
 
         return 2;            
-        
-    }
-        
-    private bool BasicLegalTileRule(Tile tile)
-    {
-        
-        if(tile.CurrentPiece() != null){
-            if(tile.CurrentPiece().GetPieceTeam() == GetPieceTeam()){
-                if(isCheckProtectedTile)
-                    coordinates.Add(tile.GetCoordinate());
-                return false;
-            } 
-            coordinates.Add(tile.GetCoordinate());
-            return false;
-        }
-
-        coordinates.Add(tile.GetCoordinate());
-        return true;            
         
     }
     
@@ -263,15 +241,11 @@ public class King : Piece
 
     void DoCastlingMove(Vector2 targetCoord){
 
-        if( (occupiedTile.GetCoordinate().x - 2) == targetCoord.x || (occupiedTile.GetCoordinate().x + 2) == targetCoord.x){
-
-            Debug.Log("Do Castling");
-
-            int targetRock = 0; //right rock
+        if( (occupiedTile.GetCoordinate().x - 2) == targetCoord.x || (occupiedTile.GetCoordinate().x + 2) == targetCoord.x){            
+            
             int direction = 1;
             
-            if(occupiedTile.GetCoordinate().x > targetCoord.x){ //Castling left
-                targetRock = 1;
+            if(occupiedTile.GetCoordinate().x > targetCoord.x){ //Castling left                
                 direction = -1;
             }
 
@@ -289,8 +263,7 @@ public class King : Piece
             castlingRook.Rock().transform.position = new Vector3(newTile.transform.position.x, 
                 castlingRook.Rock().transform.position.y,
                 newTile.transform.position.z);
-            
-            Debug.Log("Finish Castling");
+                        
         }
             
 

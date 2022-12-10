@@ -5,12 +5,12 @@ using UnityEngine;
 public class Knight : Piece
 {
     
-    private List<Vector2> coordinates = new List<Vector2>();        
+    
     public override List<Vector2> GetLegalTileCoordinates(){
         
         isCheckProtectedTile = false;
 
-        coordinates = new List<Vector2>();  
+        tileCoordinates = new List<Vector2>();  
         
         int direction = (team == 0) ? 1 : -1;
 
@@ -19,14 +19,14 @@ public class Knight : Piece
         //L move        
         LMove(occupiedTileCoord);
 
-        return coordinates;
+        return tileCoordinates;
     }
 
     public override List<Vector2> GetProtectedTileCoordinates(){
         
         isCheckProtectedTile = true;
 
-        coordinates = new List<Vector2>();  
+        tileCoordinates = new List<Vector2>();  
         
         int direction = (team == 0) ? 1 : -1;
 
@@ -35,7 +35,7 @@ public class Knight : Piece
         //L move        
         LMove(occupiedTileCoord);
 
-        return coordinates;
+        return tileCoordinates;
     }
 
     private void LMove(Vector2 occupiedTileCoord){
@@ -103,24 +103,7 @@ public class Knight : Piece
     }
     
     
-    private bool BasicLegalTileRule(Tile tile)
-    {
-        
-        if(tile.CurrentPiece() != null){
-            if(tile.CurrentPiece().GetPieceTeam() == GetPieceTeam()){
-                if(isCheckProtectedTile)
-                    coordinates.Add(tile.GetCoordinate());
-
-                return false;
-            } 
-            coordinates.Add(tile.GetCoordinate());
-            return false;
-        }
-
-        coordinates.Add(tile.GetCoordinate());
-        return true;            
-        
-    }
+    
     
     
 }

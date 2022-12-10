@@ -6,12 +6,12 @@ public class Pawn : Piece
 {
     private bool isFirstMove = true;
     private bool isEnpassantable;
-    private List<Vector2> coordinates = new List<Vector2>();      
+    
     public List<EnpassantTarget> enpassantTargets = new List<EnpassantTarget>();      
 
     public override List<Vector2> GetLegalTileCoordinates(){
         
-        coordinates = new List<Vector2>();  
+        tileCoordinates = new List<Vector2>();  
         enpassantTargets = new List<EnpassantTarget>();     
         
         int direction = (team == 0) ? 1 : -1;
@@ -25,12 +25,12 @@ public class Pawn : Piece
         CaptureMove(occupiedTileCoord, direction);
         EnpassantMove(occupiedTileCoord, direction);
         
-        return coordinates;
+        return tileCoordinates;
     }
 
     public override List<Vector2> GetProtectedTileCoordinates(){
         
-        coordinates = new List<Vector2>();  
+        tileCoordinates = new List<Vector2>();  
         
         int direction = (team == 0) ? 1 : -1;
 
@@ -39,19 +39,17 @@ public class Pawn : Piece
         //Capture Right
         Vector2 targetCoord  = new Vector2(occupiedTileCoord.x + direction, occupiedTileCoord.y + direction);                                    
         if(BoardManager.Instance.GetTileDic().ContainsKey(targetCoord)){                                
-            coordinates.Add(targetCoord);                        
+            tileCoordinates.Add(targetCoord);                        
         }
         
         //Capture Left
         targetCoord  = new Vector2(occupiedTileCoord.x - direction, occupiedTileCoord.y + direction);                                    
         if(BoardManager.Instance.GetTileDic().ContainsKey(targetCoord)){
-            coordinates.Add(targetCoord);            
+            tileCoordinates.Add(targetCoord);            
         }                   
 
-        return coordinates;
+        return tileCoordinates;
     }
-
-    
 
     private void ForwardSingleMove(Vector2 occupiedTileCoord, int direction){
         Vector2 targetCoord = new Vector2(0,0);
@@ -150,7 +148,7 @@ public class Pawn : Piece
         if(tile.CurrentPiece().GetPieceTeam() == team)
             return false;
 
-        coordinates.Add(tile.GetCoordinate());
+        tileCoordinates.Add(tile.GetCoordinate());
         return true;            
         
     }
@@ -171,7 +169,7 @@ public class Pawn : Piece
         if(!checkTile.CurrentPiece().GetComponent<Pawn>().isEnpassantable)            
             return false;
 
-        coordinates.Add(targetCoord);
+        tileCoordinates.Add(targetCoord);
         enpassantTargets.Add(new EnpassantTarget(targetCoord, checkTile.CurrentPiece()));
         
         return true;            
@@ -184,7 +182,7 @@ public class Pawn : Piece
             return false;
         }
 
-        coordinates.Add(tile.GetCoordinate());
+        tileCoordinates.Add(tile.GetCoordinate());
         return true;            
         
     }

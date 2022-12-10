@@ -37,6 +37,8 @@ public class Piece : MonoBehaviour
     
     protected bool hasMoved;
 
+    protected List<Vector2> tileCoordinates = new List<Vector2>();  
+
     public void Setup(Tile tile, int type, int team){
         occupiedTile = tile;
         this.type = (Type) type;
@@ -187,7 +189,200 @@ public class Piece : MonoBehaviour
         return hasMoved;
     }
 
-    
+    //Piece Moves
+
+    protected void ForwardLongMove(Vector2 occupiedTileCoord, Vector2 targetCoord){
+        int step = 1;        
+        
+        for (int i = (int) occupiedTileCoord.y; i < BoardManager.Instance.BoardData.rowCount; i++)
+        {
+            targetCoord = new Vector2(occupiedTileCoord.x, occupiedTileCoord.y + step);            
+            Tile targetTile = null;
+            
+            if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
+                break;            
+            
+            
+
+            targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
+            
+            if(!BasicLegalTileRule(targetTile))
+                break;
+                       
+            step++;
+        }
+    }
+    protected void BackwardLongMove(Vector2 occupiedTileCoord, Vector2 targetCoord){
+        int step = 1;        
+        
+        for (int i = (int) occupiedTileCoord.y; i > 0; i--)
+        {
+            targetCoord = new Vector2(occupiedTileCoord.x, occupiedTileCoord.y - step);            
+            Tile targetTile = null;
+            
+            if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
+                break;            
+            
+            
+
+            targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
+            
+            if(!BasicLegalTileRule(targetTile))
+                break;
+                       
+            step++;
+        }
+    }
+
+    protected void RightLongMove(Vector2 occupiedTileCoord, Vector2 targetCoord){
+        int step = 1;        
+        
+        for (int i = (int) occupiedTileCoord.x; i < BoardManager.Instance.BoardData.rowCount; i++)
+        {
+            targetCoord = new Vector2(occupiedTileCoord.x + step, occupiedTileCoord.y);            
+            Tile targetTile = null;
+            
+            if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
+                break;            
+            
+            
+
+            targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
+            
+            if(!BasicLegalTileRule(targetTile))
+                break;
+                       
+            step++;
+        }
+    }
+    protected void LeftLongMove(Vector2 occupiedTileCoord, Vector2 targetCoord){
+        int step = 1;        
+        
+        for (int i = (int) occupiedTileCoord.x; i > 0; i--)
+        {
+            targetCoord = new Vector2(occupiedTileCoord.x - step, occupiedTileCoord.y);            
+            Tile targetTile = null;
+            
+            if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
+                break;            
+            
+            
+
+            targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
+            
+            if(!BasicLegalTileRule(targetTile))
+                break;
+                       
+            step++;
+        }
+    }
+
+    protected void RightForwardDiagLongMove(Vector2 occupiedTileCoord, Vector2 targetCoord){
+        int step = 1;        
+        
+        for (int i = (int) occupiedTileCoord.x; i < BoardManager.Instance.BoardData.rowCount; i++)
+        {
+            targetCoord = new Vector2(occupiedTileCoord.x + step, occupiedTileCoord.y + step);            
+            Tile targetTile = null;
+            
+            if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
+                break;            
+            
+            
+
+            targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
+            
+            if(!BasicLegalTileRule(targetTile))
+                break;
+                       
+            step++;
+        }
+    }
+    protected void LeftForwardDiagLongMove(Vector2 occupiedTileCoord, Vector2 targetCoord){
+        int step = 1;        
+        
+        for (int i = (int) occupiedTileCoord.x; i > 0; i--)
+        {
+            targetCoord = new Vector2(occupiedTileCoord.x - step, occupiedTileCoord.y + step);            
+            Tile targetTile = null;
+            
+            if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
+                break;            
+            
+            
+
+            targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
+            
+            if(!BasicLegalTileRule(targetTile))
+                break;
+                       
+            step++;
+        }
+    }
+    protected void RightBackwardDiagLongMove(Vector2 occupiedTileCoord, Vector2 targetCoord){
+        int step = 1;        
+        
+        for (int i = (int) occupiedTileCoord.x; i < BoardManager.Instance.BoardData.rowCount; i++)
+        {
+            targetCoord = new Vector2(occupiedTileCoord.x + step, occupiedTileCoord.y - step);            
+            Tile targetTile = null;
+            
+            if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
+                break;            
+            
+            
+
+            targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
+            
+            if(!BasicLegalTileRule(targetTile))
+                break;
+                       
+            step++;
+        }
+    }
+    protected void LeftBackwardDiagLongMove(Vector2 occupiedTileCoord, Vector2 targetCoord){
+        int step = 1;        
+        
+        for (int i = (int) occupiedTileCoord.x; i > 0; i--)
+        {
+            targetCoord = new Vector2(occupiedTileCoord.x - step, occupiedTileCoord.y - step);            
+            Tile targetTile = null;
+            
+            if(!BoardManager.Instance.GetTileDic().ContainsKey(targetCoord))
+                break;            
+            
+            
+
+            targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
+            
+            if(!BasicLegalTileRule(targetTile))
+                break;
+                       
+            step++;
+        }
+    }
+    protected bool BasicLegalTileRule(Tile tile)
+    {
+        
+        if(tile.CurrentPiece() != null){
+            if(tile.CurrentPiece().GetPieceTeam() == GetPieceTeam()){
+                if(isCheckProtectedTile)
+                    tileCoordinates.Add(tile.GetCoordinate());
+                
+                return false;
+
+            } else {
+
+                tileCoordinates.Add(tile.GetCoordinate());
+                return isCheckProtectedTile && tile.CurrentPiece().GetPieceType() == Type.King;
+
+            }
+        }
+
+        tileCoordinates.Add(tile.GetCoordinate());
+        return true;            
+        
+    }
 
     
 
