@@ -226,21 +226,21 @@ public class King : Piece
 
         //Evaluate if the king under threat
         if(IsUnSafeMove(occupiedTile.GetCoordinate()))
-            score += 10;
+            score += 700;
 
         //Evaluate if can castling
         if( CanCastling(targetTile) ){            
-            score += 200;
+            score += 1100;
         }
 
         //Evaluate if king not under threat
         if(!IsUnSafeMove(occupiedTile.GetCoordinate())){             
-            if(PieceSpawner.Instance.GetTeamPieces((int)team).Count < 4)
-                score += 100;
+            if(PieceSpawner.Instance.GetTeamPieces((int)team).Count < 5)
+                score += Random.Range(10, 1000);
             else
                 score = 0.1f;
         }
-
+        
         return score;        
     }
 

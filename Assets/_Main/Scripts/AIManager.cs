@@ -5,10 +5,7 @@ using UnityEngine;
 public class AIManager : Singleton<AIManager>
 {
     private int aiTeam;
-
-    public List<Piece> lastEvaluatedPieces = new List<Piece>();
-    public List<Tile> lastEvaluatedTiles = new List<Tile>();
-    public List<float> lastEvaluatedScores = new List<float>();
+    
     private void OnEnable()
     {
         GameController.OnChangeTurn += CheckTurn;                    
@@ -47,13 +44,11 @@ public class AIManager : Singleton<AIManager>
     }
 
     IEnumerator MovePieceIE(int team){
-        yield return new WaitForEndOfFrame();
-        EvaluatedTile highestEvaluatedTile = new EvaluatedTile(null,null, -1);
-        
-        lastEvaluatedPieces = new List<Piece>();
-        lastEvaluatedTiles = new List<Tile>();
-        lastEvaluatedScores = new List<float>();
+        // yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(2);
 
+        EvaluatedTile highestEvaluatedTile = new EvaluatedTile(null,null, -1);
+                
         for (int i = 0; i < PieceSpawner.Instance.GetTeamPieces(team).Count; i++)
         {            
             Piece piece = PieceSpawner.Instance.GetTeamPieces(team)[i];
@@ -62,27 +57,25 @@ public class AIManager : Singleton<AIManager>
                 Tile targetTile = BoardManager.Instance.GetTileDic()[legalTileCoord];
                 
                 float evaluatedScore = piece.EvaluateTryOccupiesTile(targetTile);
-                // Debug.Log(piece.name + " " + targetTile.name + " Score: " + evaluatedScore);            
+                
 
                 EvaluatedTile evaluatedTile = new EvaluatedTile(piece, targetTile, evaluatedScore);
                 
                 if(evaluatedScore == -1)
                     continue;
-
+                
                 if(evaluatedScore >= highestEvaluatedTile.GetScore())
                     highestEvaluatedTile = evaluatedTile;            
             }
         }
 
-        // lastEvaluatedPieces.Add(highestEvaluatedTile.GetPieceToMove());
-        // lastEvaluatedTiles.Add(highestEvaluatedTile.GetTile());
-        // lastEvaluatedScores.Add(highestEvaluatedTile.GetScore());
+        
         
         if(highestEvaluatedTile.GetPieceToMove() == null){
             Debug.Log("No more evaluated tile");
             yield break;
         }
-        Debug.Log(highestEvaluatedTile.GetPieceToMove().name + " " + highestEvaluatedTile.GetTile().name + " Score: " + highestEvaluatedTile.GetScore());            
+        
         highestEvaluatedTile.GetPieceToMove().TryOccupiesTile(highestEvaluatedTile.GetTile());
         
         

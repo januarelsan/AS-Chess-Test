@@ -100,8 +100,7 @@ public class Piece : MonoBehaviour
 
     public virtual float EvaluateTryOccupiesTile(Tile targetTile){
         
-        float score = Random.Range(0f,1f);
-        // int score = Random.Range(0,9);
+        float score = Random.Range(0f,1f);        
 
         //Evaluate if target tile is not null
         if(targetTile == null){                        
@@ -121,8 +120,12 @@ public class Piece : MonoBehaviour
         
         //Evaluate if the king is threatened and target tile will protect the king
         if(IsUnSafeMove(PieceSpawner.Instance.GetTeamKing((int)team).occupiedTile.GetCoordinate())){
-            if(CanProtectKing(targetTile))
-                score += 300 - GetValue();   
+            if(CanProtectKing(targetTile)){
+                if(IsUnSafeMove(targetTile.GetCoordinate()))
+                    score += 600;   
+                else
+                    score += 800 - GetValue();   
+            }
         }
 
         //Evaluate if threatened
@@ -131,23 +134,82 @@ public class Piece : MonoBehaviour
         
         //Evaluate if target tile is unsafe
         if(IsUnSafeMove(targetTile.GetCoordinate()))
-            score -= GetValue();
+            score -= GetValue() * 2;
 
         //Evaluate if occupies target tile will capture enemy piece
         if(targetTile.IsOccupied()){            
-            
-            if(GetValue() > targetTile.CurrentPiece().GetValue())
-                score += (targetTile.CurrentPiece().GetValue()/2);
-            else
-                score += targetTile.CurrentPiece().GetValue();            
+            if(!IsUnSafeMove(targetTile.GetCoordinate())){
+                score += targetTile.CurrentPiece().GetValue() * 10;            
+            } else {
+                if(GetValue() > targetTile.CurrentPiece().GetValue())
+                    score += (targetTile.CurrentPiece().GetValue()/2);
+                else
+                    score += targetTile.CurrentPiece().GetValue() * 5;            
+            }
 
         }
-
-
-        return score;
+        
+        //Evaluate if target tile can threat enemy pieces        
+                return score += EvaluateCanThreat(targetTile);
         
     }
     
+    float EvaluateCanThreat(Tile targetTile){
+        
+        float addScore = 0;
+        
+        List<Piece> enemyPieces = PieceSpawner.Instance.GetTeamPieces((team == 0) ? 1 : 0);
+        Tile lastTile = occupiedTile;
+        Piece lastTargetTilePawn = targetTile.CurrentPiece();        
+        bool targetTileIsOccupied = targetTile.IsOccupied();
+                
+        occupiedTile.SetCurrentPiece(null); // leave piece
+        SetOccupiedTile(null); // leave tile
+
+        if(targetTile.IsOccupied())
+            targetTile.CurrentPiece().SetOccupiedTile(null); //target tile piece leave tile
+        
+        targetTile.SetCurrentPiece(this); // move to target tile
+        SetOccupiedTile(targetTile); // move to target tile
+        
+        foreach (Piece ePiece in enemyPieces)
+        {           
+            
+            if(targetTileIsOccupied){
+                continue;
+            }
+            if(ePiece.IsUnSafeMove(ePiece.occupiedTile.GetCoordinate())){                
+                
+                if(IsUnSafeMove(occupiedTile.GetCoordinate())){                    
+                    if(ePiece.GetValue() < GetValue())
+                        addScore -= 1000;
+                    else
+                        addScore += ePiece.GetValue() / 3;
+                } else {
+                    if(ePiece.GetPieceType() == Type.King){
+                        addScore += ePiece.GetValue() / 2;
+                    } else {
+                        addScore += ePiece.GetValue();
+                    }
+                }                                
+            }
+            
+            
+        }
+
+        SetOccupiedTile(lastTile); //back to original tile
+        
+        lastTile.SetCurrentPiece(this);
+
+        if(targetTileIsOccupied){
+            lastTargetTilePawn.SetOccupiedTile(targetTile);
+            targetTile.SetCurrentPiece(lastTargetTilePawn);
+        } else {
+            targetTile.SetCurrentPiece(null);
+        }
+        return addScore;
+    }
+
     public virtual void TryOccupiesTile(Tile targetTile){
         
         if(targetTile == null){
@@ -219,7 +281,7 @@ public class Piece : MonoBehaviour
     }
 
     public void OccupiesTile(Tile targetTile){
-        Debug.Log("oc");
+        
         //Capture Enemy Piece
         if(targetTile.CurrentPiece() != null){
             
