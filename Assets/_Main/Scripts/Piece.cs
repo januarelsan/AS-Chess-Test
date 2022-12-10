@@ -83,6 +83,15 @@ public class Piece : MonoBehaviour
             return;
         }
 
+        if(LeavingKingUprotected(targetTile))
+            return;
+        
+        hasMoved = true;
+
+        OccupiesTile(targetTile);
+    }
+
+    bool LeavingKingUprotected(Tile targetTile){
         occupiedTile.SetCurrentPiece(null);
         King king  = PieceSpawner.Instance.GetTeamKing((int)team).GetComponent<King>();        
         if(king.IsUnSafeMove(king.GetOccupiedTile().GetCoordinate())){
@@ -95,16 +104,14 @@ public class Piece : MonoBehaviour
                 occupiedTile.SetCurrentPiece(this);
                 targetTile.SetCurrentPiece(null);
                 targetTile.RemoveTempPiece();
-                return;
+                return true;
             }
             Debug.Log("You Protect The King");  
             targetTile.RemoveTempPiece();
         }        
         occupiedTile.SetCurrentPiece(this);
-        
-        hasMoved = true;
 
-        OccupiesTile(targetTile);
+        return false;
     }
 
     public void OccupiesTile(Tile targetTile){
@@ -164,6 +171,18 @@ public class Piece : MonoBehaviour
         gameObject.SetActive(false);
         GameController.Instance.AddDeadPiece(this);
     }
+    
+    public Tile GetOccupiedTile(){
+        return occupiedTile;
+    }
+
+    public void SetOccupiedTile(Tile tile){
+        occupiedTile = tile;
+    }
+
+    public bool HasMoved(){
+        return hasMoved;
+    }
 
     public virtual List<Vector2> GetLegalTileCoordinates(){
         
@@ -177,17 +196,6 @@ public class Piece : MonoBehaviour
         return coordinates;
     }
 
-    public Tile GetOccupiedTile(){
-        return occupiedTile;
-    }
-
-    public void SetOccupiedTile(Tile tile){
-        occupiedTile = tile;
-    }
-
-    public bool HasMoved(){
-        return hasMoved;
-    }
 
     //Piece Moves
 
