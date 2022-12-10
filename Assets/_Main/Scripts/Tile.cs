@@ -22,8 +22,7 @@ public class Tile : MonoBehaviour
     }
 
     void OnMouseOver()
-    {        
-        // Debug.Log(string.Format("Mouse is over GameObject {0}.",name));
+    {                
         meshRenderer.material = hoverTileMat;
         OnHoverTile(this);
     }
@@ -35,15 +34,13 @@ public class Tile : MonoBehaviour
     }
 
     void OnMouseDown() {
-        if(IsOccupied()){
-            // Debug.Log(CurrentPiece().name);
+        if(IsOccupied()){            
             CurrentPiece().Select();
         }
     }
 
     void OnMouseUp() {
-        if(IsOccupied()){
-            // Debug.Log(CurrentPiece().name);            
+        if(IsOccupied()){            
             CurrentPiece().Deselect();
         }
     }

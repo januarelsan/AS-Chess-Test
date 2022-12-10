@@ -237,9 +237,7 @@ public class Pawn : Piece
     }
 
     void DoPromotionMove(Tile targetTile, Tile lastTile){
-        Debug.Log("Test Promotion");
         
-        Debug.Log(BoardManager.Instance.BoardData.rowCount);
         if(team == Team.White){
             
             if((int) targetTile.GetCoordinate().y != BoardManager.Instance.BoardData.rowCount - 1)

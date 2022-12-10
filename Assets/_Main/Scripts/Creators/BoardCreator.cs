@@ -102,8 +102,7 @@ public class BoardCreator : MonoBehaviour
                 pieceButtonGO.SetActive(true);
 
             SetNameAndColor(pieceButtonGO, i, evenNumberToGrey);
-            
-            // Debug.Log(i + " " + colIndex + " " + evenNumberToGrey);
+                        
             colIndex++;
             if(colIndex > colCount - 1){
                 colIndex = 0;

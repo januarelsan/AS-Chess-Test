@@ -31,7 +31,7 @@ public class PieceSpawner : Singleton<PieceSpawner>
     // Start is called before the first frame update
     void SpawnPieces()
     {
-        Debug.Log(boardData.tilePieces.Count);
+        
         for (int i = 0; i < BoardManager.Instance.GetTileList().Count; i++)
         {
             if(boardData.tilePieces[i].type == 0)

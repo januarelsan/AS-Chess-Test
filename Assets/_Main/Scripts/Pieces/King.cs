@@ -157,9 +157,7 @@ public class King : Piece
             step += wayDirection;
 
             int status = CastlingWayTileRule(targetTile, wayDirection);
-
-            Debug.Log(targetCoord.x + " - " + status);
-
+            
             if(status == 0) //Ilegal
                 break;
 
