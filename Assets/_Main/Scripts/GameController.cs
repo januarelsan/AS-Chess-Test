@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class GameController : Singleton<GameController>
 {
+    public delegate void ChangeTeamTurn(int team);
+    public static event ChangeTeamTurn OnChangeTurn;
     private List<Piece> deadPieces = new List<Piece>();
     private int teamTurn = 0;
+    private int playerTeam = 0;
     
     private void OnEnable()
     {
-        Piece.OnOccupies += TakeTurn;        
-            
+        Piece.OnOccupies += ChangeTurn;                    
     }
 
     private void OnDisable() {
-        Piece.OnOccupies -= TakeTurn;                
+        Piece.OnOccupies -= ChangeTurn;                
         
     }
 
@@ -42,7 +44,8 @@ public class GameController : Singleton<GameController>
         DeadPieceUI.Instance.AddDeadPiece(deadPiece);
     }
 
-    public void TakeTurn(){
+    public void ChangeTurn(){
+        
         if(teamTurn == 0)
             teamTurn = 1;
         else
@@ -51,10 +54,17 @@ public class GameController : Singleton<GameController>
         RemoveEnpassantablePawns(teamTurn);
         CheckKingCheckmate();
         CheckDrawGame();
+
+        if(OnChangeTurn != null)
+            OnChangeTurn(teamTurn);
     }
 
     public int TeamTurn(){
         return teamTurn;
+    }
+
+    public int PlayerTeam(){
+        return playerTeam;
     }
 
     void RemoveEnpassantablePawns(int team){

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PieceSpawner : Singleton<PieceSpawner>
 {
+    public delegate void FinishSpawnPieces();
+    public static event FinishSpawnPieces OnFinishSpawnPieces;
     [SerializeField] private GameObject[] piecePrefabs;
 
     private BoardData boardData = new BoardData();   
@@ -48,6 +50,9 @@ public class PieceSpawner : Singleton<PieceSpawner>
             BoardManager.Instance.GetTileList()[i].SetCurrentPiece(pieceComponent);
 
         }   
+
+        if(OnFinishSpawnPieces != null)
+            OnFinishSpawnPieces();
     }
 
     public List<Piece> GetTeamPieces(int team, int type = 0){

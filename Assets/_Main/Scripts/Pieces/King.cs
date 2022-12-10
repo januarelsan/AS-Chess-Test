@@ -6,6 +6,8 @@ public class King : Piece
 {
     
     private List<CastlingRook> availCastlingRocks = new List<CastlingRook>();
+
+    private bool canCastling;
     public override List<Vector2> GetLegalTileCoordinates(){
         
         isCheckProtectedTile = false;
@@ -199,17 +201,49 @@ public class King : Piece
         
     }
     
-    public bool IsUnSafeMove(Vector2 targetTile){
-        int opsTeam = ((int) team == 1) ? 0 : 1;
-        return PieceSpawner.Instance.GetTeamPieces(opsTeam).Find(
-            delegate(Piece piece)
-            {
-                return piece.GetProtectedTileCoordinates().Contains(targetTile);                
-            });
-        
-    }
-        
     
+        
+    public override float EvaluateTryOccupiesTile(Tile targetTile){
+        
+        float score = Random.Range(0f,1f);
+
+        //Evaluate if target tile is not null
+        if(targetTile == null){                        
+            return score = -1;
+        }
+
+        bool isLegalTile = GetLegalTileCoordinates().Contains(targetTile.GetCoordinate());        
+
+        //Evaluate if this is legal tile
+        if(!isLegalTile){                        
+            return score = -1;
+        }
+        
+        //Evaluate if target tile is unsafe
+        if(IsUnSafeMove(targetTile.GetCoordinate())){                        
+            return score = -1;
+        }                
+
+        //Evaluate if the king under threat
+        if(IsUnSafeMove(occupiedTile.GetCoordinate()))
+            score += 10;
+
+        //Evaluate if can castling
+        if( CanCastling(targetTile) ){            
+            score += 200;
+        }
+
+        //Evaluate if king not under threat
+        if(!IsUnSafeMove(occupiedTile.GetCoordinate())){             
+            if(PieceSpawner.Instance.GetTeamPieces((int)team).Count < 4)
+                score += 100;
+            else
+                score = 0.1f;
+        }
+
+        return score;        
+    }
+
     public override void TryOccupiesTile(Tile targetTile){
         
         if(targetTile == null){
@@ -227,7 +261,7 @@ public class King : Piece
         }
 
         if(IsUnSafeMove(targetTile.GetCoordinate())){
-            Debug.Log("Target Tile is not Safe");    
+            Debug.Log("Target Tile is not Safe: " + targetTile.GetCoordinate());    
             transform.position = occupiedTile.transform.position;            
             return;
         }
@@ -237,6 +271,13 @@ public class King : Piece
         DoCastlingMove(targetTile.GetCoordinate());
 
         base.OccupiesTile(targetTile);
+    }
+
+    bool CanCastling(Tile targetTile){
+        if( (occupiedTile.GetCoordinate().x - 2) == targetTile.GetCoordinate().x || (occupiedTile.GetCoordinate().x + 2) == targetTile.GetCoordinate().x){            
+            return true;
+        }
+        return false;
     }
 
     void DoCastlingMove(Vector2 targetCoord){

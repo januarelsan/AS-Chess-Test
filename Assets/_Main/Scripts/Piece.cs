@@ -30,8 +30,11 @@ public class Piece : MonoBehaviour
         Black = 1
     }
     
+    
+
     private Type type;
     protected Team team;
+    
 
     protected bool isCheckProtectedTile;
     
@@ -42,8 +45,7 @@ public class Piece : MonoBehaviour
     public void Setup(Tile tile, int type, int team){
         occupiedTile = tile;
         this.type = (Type) type;
-        this.team = (Team) team;        
-
+        this.team = (Team) team;                
       
         meshRenderer.material = teamMaterials[team];
 
@@ -59,12 +61,91 @@ public class Piece : MonoBehaviour
         return team;
     }
 
+    public int GetValue(){
+        int value = 0;
+        switch ((int) type)
+        {
+            case 0: 
+                value = 0;
+                break;
+            case 1: 
+                value = 10;
+                break;
+            case 2: 
+                value = 30;
+                break;
+            case 3: 
+                value = 30;
+                break;
+            case 4: 
+                value = 50;
+                break;
+            case 5: 
+                value = 90;
+                break;
+            case 6: 
+                value = 900;
+                break;            
+        }
+        return value;
+    }
+
     public void Select(){        
         OnSelectPiece(this);
     }
 
     public void Deselect(){
         OnDeselectPiece(this);
+    }
+
+    public virtual float EvaluateTryOccupiesTile(Tile targetTile){
+        
+        float score = Random.Range(0f,1f);
+        // int score = Random.Range(0,9);
+
+        //Evaluate if target tile is not null
+        if(targetTile == null){                        
+            return score = -1;
+        }
+
+        bool isLegalTile = GetLegalTileCoordinates().Contains(targetTile.GetCoordinate());        
+
+        //Evaluate if this is legal tile
+        if(!isLegalTile){                        
+            return score = -1;
+        }
+
+        //Evaluate if target tile will leave the king unprotected
+        if(LeavingKingUprotected(targetTile))
+            return score = -1;   
+        
+        //Evaluate if the king is threatened and target tile will protect the king
+        if(IsUnSafeMove(PieceSpawner.Instance.GetTeamKing((int)team).occupiedTile.GetCoordinate())){
+            if(CanProtectKing(targetTile))
+                score += 300 - GetValue();   
+        }
+
+        //Evaluate if threatened
+        if(IsUnSafeMove(occupiedTile.GetCoordinate()))
+            score += GetValue();
+        
+        //Evaluate if target tile is unsafe
+        if(IsUnSafeMove(targetTile.GetCoordinate()))
+            score -= GetValue();
+
+        //Evaluate if occupies target tile will capture enemy piece
+        if(targetTile.IsOccupied()){            
+            
+            if(GetValue() > targetTile.CurrentPiece().GetValue())
+                score += (targetTile.CurrentPiece().GetValue()/2);
+            else
+                score += targetTile.CurrentPiece().GetValue();            
+
+        }
+
+
+        return score;
+        
     }
     
     public virtual void TryOccupiesTile(Tile targetTile){
@@ -95,18 +176,18 @@ public class Piece : MonoBehaviour
         occupiedTile.SetCurrentPiece(null);
         King king  = PieceSpawner.Instance.GetTeamKing((int)team).GetComponent<King>();        
         if(king.IsUnSafeMove(king.GetOccupiedTile().GetCoordinate())){
-            Debug.Log("The King Unprotected");  
+            // Debug.Log("The King Unprotected");  
             targetTile.SetCurrentPiece(this, true);
             
             if(king.IsUnSafeMove(king.GetOccupiedTile().GetCoordinate())){
-                Debug.Log("You leave The King Unprotected");    
+                // Debug.Log("You leave The King Unprotected");    
                 transform.position = occupiedTile.transform.position;            
                 occupiedTile.SetCurrentPiece(this);
                 targetTile.SetCurrentPiece(null);
                 targetTile.RemoveTempPiece();
                 return true;
             }
-            Debug.Log("You Protect The King");  
+            // Debug.Log("You Protect The King");  
             targetTile.RemoveTempPiece();
         }        
         occupiedTile.SetCurrentPiece(this);
@@ -114,8 +195,31 @@ public class Piece : MonoBehaviour
         return false;
     }
 
-    public void OccupiesTile(Tile targetTile){
+    bool CanProtectKing(Tile targetTile){
+        occupiedTile.SetCurrentPiece(null);
+        King king  = PieceSpawner.Instance.GetTeamKing((int)team).GetComponent<King>();        
+        if(king.IsUnSafeMove(king.GetOccupiedTile().GetCoordinate())){            
+            targetTile.SetCurrentPiece(this, true);
+            
+            if(king.IsUnSafeMove(king.GetOccupiedTile().GetCoordinate())){                
+                transform.position = occupiedTile.transform.position;            
+                occupiedTile.SetCurrentPiece(this);
+                targetTile.SetCurrentPiece(null);
+                targetTile.RemoveTempPiece();
+                return false;
+            }
+            // Debug.Log("You Protect The King");  
+            targetTile.RemoveTempPiece();
+            occupiedTile.SetCurrentPiece(this);
+            return true;
+        }        
+        occupiedTile.SetCurrentPiece(this);
 
+        return false;
+    }
+
+    public void OccupiesTile(Tile targetTile){
+        Debug.Log("oc");
         //Capture Enemy Piece
         if(targetTile.CurrentPiece() != null){
             
@@ -164,6 +268,16 @@ public class Piece : MonoBehaviour
         }
         
         return safeTileCount > 0;
+    }
+
+    public bool IsUnSafeMove(Vector2 targetTile){
+        int opsTeam = ((int) team == 1) ? 0 : 1;
+        return PieceSpawner.Instance.GetTeamPieces(opsTeam).Find(
+            delegate(Piece piece)
+            {
+                return piece.GetProtectedTileCoordinates().Contains(targetTile);                
+            });
+        
     }
 
     public void Dead(){

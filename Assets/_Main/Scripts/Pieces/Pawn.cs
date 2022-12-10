@@ -86,7 +86,7 @@ public class Pawn : Piece
                         
             targetTile = BoardManager.Instance.GetTileDic()[targetCoord];
             
-            if(!ForwardSingleMoveRule(targetTile,true))
+            if(!ForwardSingleMoveRule(targetTile))
                 break;
                        
             step += direction;
@@ -175,11 +175,9 @@ public class Pawn : Piece
         return true;            
         
     }
-    private bool ForwardSingleMoveRule(Tile tile, bool testDoubleMove = false)
+    private bool ForwardSingleMoveRule(Tile tile)
     {
-        if(testDoubleMove)
-            return false;
-
+        
         if(tile.CurrentPiece() != null){            
             return false;
         }
