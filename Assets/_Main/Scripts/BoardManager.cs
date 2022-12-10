@@ -8,6 +8,12 @@ public class BoardManager : Singleton<BoardManager>
     public delegate void FinishSetup();
     public static event FinishSetup OnFinishSetup;
 
+    public BoardData BoardData
+    {
+        get { return boardData; }
+        
+    }
+
     [SerializeField] private GameObject tilePrefab;
 
     private List<Tile> tileList = new List<Tile>();
@@ -18,14 +24,6 @@ public class BoardManager : Singleton<BoardManager>
     private const string boardDataFilename = "BoardData";
 
     
-    public int MyProperty { get; private set; }
-    private int myVar;
-    
-    public BoardData BoardData
-    {
-        get { return boardData; }
-        
-    }
 
     // Start is called before the first frame update
     void Start()
