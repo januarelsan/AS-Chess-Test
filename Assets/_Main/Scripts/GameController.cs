@@ -6,17 +6,15 @@ public class GameController : Singleton<GameController>
 {
     private List<Piece> deadPieces = new List<Piece>();
     private int teamTurn = 0;
-
-    
     
     private void OnEnable()
     {
-        Piece.OnOccupies += CheckKingCheckmate;        
+        Piece.OnOccupies += TakeTurn;        
             
     }
 
     private void OnDisable() {
-        Piece.OnOccupies -= CheckKingCheckmate;                
+        Piece.OnOccupies -= TakeTurn;                
         
     }
 
@@ -25,9 +23,7 @@ public class GameController : Singleton<GameController>
         PieceSpawner.Instance.GetTeamKing(0).GetComponent<King>().IsCheckmate();
     }
 
-    void CheckKingCheckmate(){
-        
-        TakeTurn();
+    void CheckKingCheckmate(){                
         
         if(PieceSpawner.Instance.GetTeamKing(0).GetComponent<King>().IsCheckmate() && teamTurn == 0){
             GameoverUI.Instance.Active("White King is Checkmate");
@@ -38,9 +34,7 @@ public class GameController : Singleton<GameController>
             GameoverUI.Instance.Active("Black King is Checkmate");
             return;
         }
-
-        CheckDrawGame();
-        
+                
     }
 
     public void AddDeadPiece(Piece deadPiece){
@@ -55,6 +49,8 @@ public class GameController : Singleton<GameController>
             teamTurn = 0;
 
         RemoveEnpassantablePawns(teamTurn);
+        CheckKingCheckmate();
+        CheckDrawGame();
     }
 
     public int TeamTurn(){
