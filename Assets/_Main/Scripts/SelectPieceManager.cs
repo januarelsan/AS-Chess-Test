@@ -29,6 +29,9 @@ public class SelectPieceManager : MonoBehaviour
     }
 
     public void SelectPiece(Piece piece){
+
+        if(PromoteManager.Instance.GetIsChoosingPromotion())
+            return;
         
         if(GameController.Instance.GameMode() != 0){
             if(GameController.Instance.TeamTurn() != GameController.Instance.PlayerTeam())

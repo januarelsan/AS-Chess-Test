@@ -10,6 +10,8 @@ public class PromoteManager : Singleton<PromoteManager>
     private Tile toPromoteLastTile;
     private Tile toPromoteTile;
 
+    private bool isChoosingPromotion;
+
 
     public void PromotePawn(Pawn pawn, Tile lastTile, Tile toPromoteTile, bool isBeQueen = false){
         toPromotePawn = pawn;
@@ -25,6 +27,9 @@ public class PromoteManager : Singleton<PromoteManager>
     }
 
     void OpenPromotionPanel(int team){
+
+        isChoosingPromotion = true;
+
         promotePanel.SetActive(true);
         teamButtonHolders[team].SetActive(true);
     }
@@ -47,5 +52,11 @@ public class PromoteManager : Singleton<PromoteManager>
 
         ClosePromotionPanel((int) toPromotePawn.GetPieceTeam());        
 
+        isChoosingPromotion = false;
+
+    }
+
+    public bool GetIsChoosingPromotion(){
+        return isChoosingPromotion;
     }
 }
