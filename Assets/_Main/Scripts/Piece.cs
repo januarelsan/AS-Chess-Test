@@ -96,7 +96,7 @@ public class Piece : MonoBehaviour
     }
 
     #region AI Evaluation
-    public virtual float EvaluateTryOccupiesTile(Tile targetTile){
+    public virtual float EvaluateTryOccupiesTile(Tile targetTile, bool isDesperate){
         
         float score = Random.Range(0f,1f);        
 
@@ -111,10 +111,13 @@ public class Piece : MonoBehaviour
         if(!isLegalTile){                        
             return score = -1;
         }
-
+        
         //Evaluate if target tile will leave the king unprotected
         if(LeavingKingUprotected(targetTile))
             return score = -1;   
+
+        if(isDesperate)
+            return 1500;
         
         //Evaluate if the king is threatened and target tile will protect the king
         if(IsUnSafeMove(PieceSpawner.Instance.GetTeamKing((int)team).occupiedTile.GetCoordinate())){

@@ -203,7 +203,7 @@ public class King : Piece
     
     
         
-    public override float EvaluateTryOccupiesTile(Tile targetTile){
+    public override float EvaluateTryOccupiesTile(Tile targetTile, bool isDesperate){
         
         float score = Random.Range(0f,1f);
 
@@ -222,7 +222,10 @@ public class King : Piece
         //Evaluate if target tile is unsafe
         if(IsUnSafeMove(targetTile.GetCoordinate())){                        
             return score = -1;
-        }                
+        }         
+
+        if(isDesperate)
+            return 1500;       
 
         //Evaluate if the king under threat
         if(IsUnSafeMove(occupiedTile.GetCoordinate()))

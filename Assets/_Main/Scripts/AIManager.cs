@@ -51,37 +51,38 @@ public class AIManager : Singleton<AIManager>
 
         EvaluatedTile highestEvaluatedTile = new EvaluatedTile(null,null, -1);
                 
+        highestEvaluatedTile = EvaluateTile(highestEvaluatedTile, team, false);
+
+        if(highestEvaluatedTile.GetPieceToMove() == null){            
+            highestEvaluatedTile = EvaluateTile(highestEvaluatedTile, team, true);            
+        }
+        
+        highestEvaluatedTile.GetPieceToMove().TryOccupiesTile(highestEvaluatedTile.GetTile());
+        
+    }
+
+    EvaluatedTile EvaluateTile(EvaluatedTile highestEvaluatedTile, int team, bool isDesperate){
         for (int i = 0; i < PieceSpawner.Instance.GetTeamPieces(team).Count; i++)
         {            
             Piece piece = PieceSpawner.Instance.GetTeamPieces(team)[i];
+            
             foreach (Vector2 legalTileCoord in piece.GetLegalTileCoordinates())
             {            
                 Tile targetTile = BoardManager.Instance.GetTileDic()[legalTileCoord];
                 
-                float evaluatedScore = piece.EvaluateTryOccupiesTile(targetTile);
-                
-
+                float evaluatedScore = piece.EvaluateTryOccupiesTile(targetTile, isDesperate);
+                                
                 EvaluatedTile evaluatedTile = new EvaluatedTile(piece, targetTile, evaluatedScore);
                 
                 if(evaluatedScore == -1)
                     continue;
                 
                 if(evaluatedScore >= highestEvaluatedTile.GetScore())
-                    highestEvaluatedTile = evaluatedTile;            
+                    return evaluatedTile;            
             }
         }
 
-        
-        
-        if(highestEvaluatedTile.GetPieceToMove() == null){
-            Debug.Log("No more evaluated tile");
-            yield break;
-        }
-        
-        highestEvaluatedTile.GetPieceToMove().TryOccupiesTile(highestEvaluatedTile.GetTile());
-        
-        
-        
+        return highestEvaluatedTile;
     }
 
     public int GetAITeam(){
