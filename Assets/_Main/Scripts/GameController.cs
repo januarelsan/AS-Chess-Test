@@ -40,6 +40,7 @@ public class GameController : Singleton<GameController>
         gameMode = gameSettingData.mode;
 
         BoardManager.Instance.Setup();
+        
     }
 
     private void LoadGameSettingData(){
