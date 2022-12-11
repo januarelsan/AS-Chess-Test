@@ -240,6 +240,13 @@ public class King : Piece
             else
                 score = 0.1f;
         }
+
+        //Evaluate if occupies target tile will capture enemy piece
+        if(targetTile.IsOccupied()){            
+            if(!IsUnSafeMove(targetTile.GetCoordinate())){
+                score += targetTile.CurrentPiece().GetValue() * 10;            
+            } 
+        }
         
         return score;        
     }
