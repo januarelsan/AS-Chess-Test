@@ -18,4 +18,8 @@ public class SceneController : Singleton<SceneController>
     public void Restart(){
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
+    public void Quit(){
+        Application.Quit();
+    }
 }
