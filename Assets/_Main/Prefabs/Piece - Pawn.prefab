@@ -126,6 +126,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   teamMaterials:
-  - {fileID: 2100000, guid: 960823feb1e148643be0d91597f6994d, type: 2}
-  - {fileID: 2100000, guid: b5627df92e98bcf458d202011ec28a5d, type: 2}
+  - {fileID: 2100000, guid: 3713f7de54141c548bc7cb2d8f11d166, type: 2}
+  - {fileID: 2100000, guid: 78ae17e54415a69429ffe8a2149a9062, type: 2}
   meshRenderer: {fileID: 7233872815584171278}
