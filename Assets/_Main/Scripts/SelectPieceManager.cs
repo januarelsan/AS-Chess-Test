@@ -30,8 +30,14 @@ public class SelectPieceManager : MonoBehaviour
 
     public void SelectPiece(Piece piece){
         
-        if(GameController.Instance.TeamTurn() != GameController.Instance.PlayerTeam())
+        if(GameController.Instance.GameMode() != 0){
+            if(GameController.Instance.TeamTurn() != GameController.Instance.PlayerTeam())
+                return; 
+        } 
+        
+        if(GameController.Instance.GameMode() == 2){
             return; 
+        }
 
         if(isSelectingPiece){
             Debug.Log("Still Selecting a Piece");

@@ -25,13 +25,9 @@ public class BoardManager : Singleton<BoardManager>
 
     
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        Setup();
-    }
+    
 
-    private void Setup(){
+    public void Setup(){
         LoadBoardData();
         GenerateTiles(boardData.colCount, boardData.rowCount);
     }

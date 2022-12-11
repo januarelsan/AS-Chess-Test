@@ -20,32 +20,34 @@ public class AIManager : Singleton<AIManager>
     // Start is called before the first frame update
     void Setup()
     {
-        aiTeam = (GameController.Instance.PlayerTeam() == 0) ? 1 : 0;
-        // aiTeam = 2;
-        CheckTurn(GameController.Instance.TeamTurn());
-        
+        if(GameController.Instance.GameMode() == 0)
+            aiTeam = -1;
+        else
+            aiTeam = (GameController.Instance.PlayerTeam() == 0) ? 1 : 0;        
+
+        CheckTurn(GameController.Instance.TeamTurn());        
     }
 
     
 
     void CheckTurn(int team){
-        // Debug.Log("AI Turn " + (aiTeam == GameController.Instance.TeamTurn()));
-        
-        if(aiTeam != GameController.Instance.TeamTurn())
-            return;
+                
+        if(GameController.Instance.GameMode() != 2){
+            if(aiTeam != GameController.Instance.TeamTurn())
+                return;
+        }
 
         MovePiece(team);
     }
 
     void MovePiece(int team){
-        // Debug.Log("AI Move Piece " + team);
-        
+                
         StartCoroutine(MovePieceIE(team));
     }
 
     IEnumerator MovePieceIE(int team){
-        // yield return new WaitForEndOfFrame();
-        yield return new WaitForSeconds(2);
+        
+        yield return new WaitForSeconds(Random.Range(1f,3f));
 
         EvaluatedTile highestEvaluatedTile = new EvaluatedTile(null,null, -1);
                 

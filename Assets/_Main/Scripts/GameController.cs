@@ -9,6 +9,10 @@ public class GameController : Singleton<GameController>
     private List<Piece> deadPieces = new List<Piece>();
     private int teamTurn = 0;
     private int playerTeam = 0;
+    private int gameMode = 0;
+
+    private GameSettingData gameSettingData = new GameSettingData();   
+    private const string gameSettingDataFilename = "GameSettingData";
     
     private void OnEnable()
     {
@@ -21,8 +25,26 @@ public class GameController : Singleton<GameController>
     }
 
     void Start(){
+        
+        SetupGame();
+
         CheckDrawGame();  
         PieceSpawner.Instance.GetTeamKing(0).GetComponent<King>().IsCheckmate();
+    }
+
+    void SetupGame(){
+        
+        LoadGameSettingData();
+
+        playerTeam = gameSettingData.playerOneTeam;
+        gameMode = gameSettingData.mode;
+
+        BoardManager.Instance.Setup();
+    }
+
+    private void LoadGameSettingData(){
+        string json = SaveLoadJSON.Instance.LoadFromJsonFile(gameSettingDataFilename);
+        JsonUtility.FromJsonOverwrite(json, gameSettingData);        
     }
 
     void CheckKingCheckmate(){                
@@ -65,6 +87,10 @@ public class GameController : Singleton<GameController>
 
     public int PlayerTeam(){
         return playerTeam;
+    }
+
+    public int GameMode(){
+        return gameMode;
     }
 
     void RemoveEnpassantablePawns(int team){
